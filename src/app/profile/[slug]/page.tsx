@@ -4,9 +4,9 @@ import Navbar from "@/components/Header";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/loader";
-import CustomizeLinkSkeleton from "@/components/addLinksComponents/customizeLinkSkeleton";
+import CustomizeProfileDetails from "@/components/profileDetailsComponents/customizeSkeletonprofile";
 
-const Addlink = () => {
+const Profile = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const {
@@ -17,7 +17,7 @@ const Addlink = () => {
   } = useStateContext();
   useEffect(() => {
     setLoading(true);
-    setActivePage("Links");
+    setActivePage("profileDetails");
     setLoading(false);
   }, [setActivePage]);
 
@@ -30,11 +30,11 @@ const Addlink = () => {
       ) : (
         <div className="bg-[#fffafa]">
           <Navbar />
-          <CustomizeLinkSkeleton />
+          <CustomizeProfileDetails />
         </div>
       )}
     </div>
   );
 };
 
-export default Addlink;
+export default Profile;

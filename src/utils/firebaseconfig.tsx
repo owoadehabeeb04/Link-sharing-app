@@ -13,7 +13,7 @@ const firebaseConfig = {
   projectId: "devlink-sharing-app",
   storageBucket: "devlink-sharing-app.appspot.com",
   messagingSenderId: "1036150263879",
-  appId: "1:1036150263879:web:6e85df2a8f41619c782162",
+  appId: "1:1036150263879:web:6e85df2a8f41619c782162"
 };
 
 // Initialize Firebase

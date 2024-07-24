@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        "purple-2xl": "0px 0px 32px 0px rgba(99, 60, 255, 0.25)",
+      },
+
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -15,6 +19,12 @@ const config: Config = {
       },
     },
   },
+  variants: {
+    extend: {
+      boxShadow: ["hover"],
+    },
+  },
+
   plugins: [],
 };
 export default config;

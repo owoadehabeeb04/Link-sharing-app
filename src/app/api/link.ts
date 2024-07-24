@@ -14,7 +14,6 @@ export const createLinkCollection = async (link: linkProps) => {
   const linkDocRef = doc(linkref);
   await setDoc(linkDocRef, link);
   const orderIdd = linkDocRef.id;
-  console.log(orderIdd);
   return orderIdd;
 };
 
@@ -23,7 +22,6 @@ export const getShowLink = async () => {
   const q = query(showLink);
   const querySnapshot = await getDocs(q);
 
-  console.log(querySnapshot);
   let links = [] as linkProps[];
 
   querySnapshot.forEach((doc) => {
@@ -31,6 +29,7 @@ export const getShowLink = async () => {
       name: doc.data().name ?? doc.data().name,
       link: doc.data().the_link ?? doc.data().link,
       userId: doc.data().userId ?? doc.data().userId,
+      backgroundColor: doc.data().backgroundColor ?? doc.data().backgroundColor,
     });
   });
   console.log(links);
@@ -52,6 +51,8 @@ export const getShowLinkOfCurrentUser = async (userId: any) => {
         name: doc.data().name ?? doc.data().name,
         link: doc.data().the_link ?? doc.data().link,
         userId: doc.data().userId ?? doc.data().userId,
+        backgroundColor:
+          doc.data().backgroundColor ?? doc.data().backgroundColor,
       });
     });
 
@@ -62,3 +63,4 @@ export const getShowLinkOfCurrentUser = async (userId: any) => {
     return [];
   }
 };
+

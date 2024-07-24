@@ -21,14 +21,17 @@ const Signup = () => {
   const [errorPassword, setErrorPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorConfirmPassword, setErrorConfirmPassword] = useState("");
+  const { setActivePage } = useStateContext();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   const {
     setUserDetails,
     userDetails,
     currentUserIdData,
     setCurrentUserIdData,
   } = useStateContext();
-  const router = useRouter();
+
   const validateForm = () => {
     let isValid = true;
 
@@ -99,10 +102,19 @@ const Signup = () => {
         userId: userId,
         password: passwordValue,
         profileImage: "",
+        links: [
+          {
+            name: "",
+            link: "",
+            userId: "",
+            backgroundColor: "",
+          },
+        ],
       });
 
       console.log("User ID:", userId);
       router.push("addLink/" + userId);
+      setActivePage("Links");
 
       try {
         let users = await getShowUser();

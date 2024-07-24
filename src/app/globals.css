@@ -11,5 +11,13 @@ body {
   box-shadow: 0px 0px 32px 0px rgba(99, 60, 255, 0.25);
 }
 .loading-email {
-  box-shadow: 0px 0px 32px 0px rgba(99, 60, 255, 0.25)
+  box-shadow: 0px 0px 32px 0px rgba(99, 60, 255, 0.25);
+}
+
+input_focus2 :hover {
+  box-shadow: 0px 0px 32px 0px rgba(99, 60, 255, 0.25);
+}
+.addLinkButton:hover{
+  box-shadow: 0px 0px 32px 0px rgba(99, 60, 255, 0.25);
+
 }

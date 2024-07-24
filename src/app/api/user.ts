@@ -9,8 +9,11 @@ import {
   // query,
   doc,
   getDocs,
+  getDoc,
   query,
   setDoc,
+  updateDoc,
+  arrayRemove,
 } from "firebase/firestore";
 export async function createUser(userData: userProps) {
   const docRef = doc(db, "Users", userData.userId);
@@ -18,18 +21,24 @@ export async function createUser(userData: userProps) {
   return;
 }
 // upload profile image
-export const uploadImageFile = async (path: string, file: any) => {
+
+export const uploadImageFile = async (path: string, file: File) => {
   const storage = getStorage();
   const storageRef = ref(storage, path);
   let url = "";
-  // 'file' comes from the Blob or File API
-  await uploadBytes(storageRef, file).then(async (snapshot: { ref: any }) => {
-    await getDownloadURL(snapshot.ref).then((downloadURL: string) => {
-      url = downloadURL;
-    });
-  });
+
+  try {
+    const snapshot = await uploadBytes(storageRef, file);
+    url = await getDownloadURL(snapshot.ref);
+    
+  } catch (error) {
+    console.error("Upload error:", error);
+    throw error; // Re-throw the error after logging it
+  }
+
   return url;
 };
+
 // show user profile
 export const getShowUser = async () => {
   const showUser = collection(db, "Users");
@@ -49,8 +58,51 @@ export const getShowUser = async () => {
       email: data.email || "",
       userId: data.userId || "",
       password: data.password || "",
+      links: data.links || "",
     });
   });
   console.log(users);
   return users;
+};
+
+export const linksOfUsersAndFirstNameAndLastName = async (
+  userId: any,
+  newLink?: string[]
+) => {
+  try {
+    const userItemRef = doc(db, "Users", userId);
+    console.log("clicking o,", userId);
+    await setDoc(
+      userItemRef,
+      {
+        links: newLink,
+      },
+      { merge: true }
+    );
+
+    console.log("updated item:", userId);
+  } catch (error) {
+    console.error("Error updating in firebase:", error);
+    throw error;
+  }
+};
+
+export const UpdateImage = async (userId: any, newProfileImage?: string) => {
+  try {
+    const userItemRef = doc(db, "Users", userId);
+    console.log("clicking o,", userId);
+    await setDoc(
+      userItemRef,
+      {
+        profileImage: newProfileImage,
+      }
+      // { merge: true }
+    );
+    console.log("successfully");
+
+    console.log("updated item:", userId);
+  } catch (error) {
+    console.error("Error updating in firebase:", error);
+    throw error;
+  }
 };

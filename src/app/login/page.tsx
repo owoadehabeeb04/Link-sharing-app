@@ -10,6 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { auth } from "@/utils/firebaseconfig";
 import { useRouter } from "next/navigation";
 import { errorMessages } from "@/utils/errorFirebaseMessage";
+import { useStateContext } from "@/components/context/stateContext";
 const Login = () => {
   const [emailValue, setEmail] = useState("");
   const [errorEmail, setErrorEmail] = useState("");
@@ -17,6 +18,7 @@ const Login = () => {
   const [errorPassword, setErrorPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { setActivePage } = useStateContext();
   const validateForm = () => {
     let isValid = true;
 
@@ -58,6 +60,7 @@ const Login = () => {
         passwordValue
       );
       const user = userCredentials.user;
+      const userId = auth?.currentUser?.uid;
       console.log(user);
       if (user) {
         // alert("success");
@@ -65,8 +68,9 @@ const Login = () => {
         setPassword("");
         // localStorage.setItem("loggedIn", JSON.stringify(true));
         toast.success("Log in successfully");
-        router.push("/addLink");
-    } else {
+        router.push("addLink/" + userId);
+        setActivePage("Links");
+      } else {
         // alert("failed");
       }
     } catch (err: any) {
