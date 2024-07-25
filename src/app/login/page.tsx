@@ -85,7 +85,7 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-white flex w-full justify-center  h-screen transition-all  items-center">
+    <div className="bg-white flex w-full justify-center mt-8 sm:mt-0   sm:h-screen transition-all  items-center">
       <div className="border-2 border-white  pb-[2.5rem]  transition-all px-[2rem] sm:px-[2.5rem] border-solid shadow-lg flex flex-col gap-[3.19rem] ">
         <div className="flex sm:justify-center justify-start  transition-all items-center gap-2">
           <Image src={devlinks} width="40" height="40" alt="devlinks" />
@@ -123,7 +123,10 @@ const Login = () => {
                         : "border-[#D9D9D9]"
                     }`}
                     placeholder="e.g. alex@email.com"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setErrorEmail("");
+                    }}
                   />
                   <Image
                     src={email}
@@ -158,7 +161,10 @@ const Login = () => {
                         : "border-[#D9D9D9]"
                     }`}
                     placeholder="Enter your password"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setErrorPassword("");
+                    }}
                   />
                   <Image
                     src={password}

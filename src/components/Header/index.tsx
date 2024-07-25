@@ -41,8 +41,8 @@ const Navbar = () => {
   ];
 
   return (
-    <div className=" mx-[1.5rem] translate-y-4   rounded-[0.75rem] bg-[#fff]">
-      <div className="flex px-2 md:px-[1.5rem] py-4 md:py-6 justify-between  transition-all items-center">
+    <div className=" max-[320px]:mx-3 mx-[1.5rem] translate-y-4   rounded-[0.75rem] bg-[#fff]">
+      <div className="flex max-[320px]:px-0 px-2 md:px-[1.5rem] py-4 md:py-6 justify-between  transition-all items-center">
         <div className="flex transition-all items-center gap-2">
           <Image src={devlinks} width="32" height="32" alt="devlinks" />
           <Image
@@ -54,11 +54,11 @@ const Navbar = () => {
           />
         </div>
 
-        <div className="flex items-center gap-1 md:gap-4">
+        <div className="flex items-center gap-0 md:gap-4">
           {navItems.map((navs, i) => (
             <div
               key={i}
-              className={`flex py-[0.6875rem] hover:text-[#633CFF] cursor-pointer px-[1.6875rem] text-base font-semibold leading-[150%] items-center gap-2 rounded-[0.5rem] border-none ${
+              className={`flex py-[0.6875rem] hover:text-[#633CFF] cursor-pointer max-[320px]:px-4 px-[1.6875rem] text-base font-semibold leading-[150%] items-center gap-2 rounded-[0.5rem] border-none ${
                 activePage === navs?.active
                   ? "text-[#633CFF] bg-[#EFEBFF]"
                   : "text-[#737373] bg-transparent"

@@ -72,9 +72,9 @@ const PreviewPage = () => {
         <Loader />
       ) : (
         <div>
-          <div className="h-[25rem] rounded-[0_0_3.2rem_3.2rem] bg-[#633cff] mobile:hidden"></div>
+          <div className="sm:h-[25rem] relative rounded-[0_0_3.2rem_3.2rem] sm:bg-[#633cff] hidd sm:flex"></div>
           {userId && (
-            <header className="absolute top-[2.4rem] left-[-1%] mx-[2.4rem] flex w-[97%] items-center justify-between rounded-[1.2rem] bg-white px-[1rem] py-[1rem] mobile:static mobile:mx-0">
+            <header className="sm:flex hidden absolute top-[2.4rem] left-[-0.1%] mx-[2.4rem]  w-[100%] items-center justify-between rounded-[1.2rem] bg-white px-[1rem] py-[1rem] mobile:static sm:mx-0">
               <Link
                 href={`/addLink/${userId}`}
                 className="rounded-[0.8rem] border border-[#633cff] text-[#633cff] px-[2.7rem] py-[1.1rem] text-[1rem] font-semibold leading-[150%]  mobile:px-8"
@@ -89,7 +89,21 @@ const PreviewPage = () => {
               </button>
             </header>
           )}
-          <div className="absolute left-1/2 top-[15rem] flex w-[21.8125rem] -translate-x-1/2 flex-col items-center rounded-[2.4rem] bg-white px-[3.6rem] py-[3rem] shadow-dark-sh mobile:static mobile:w-full mobile:translate-x-0 mobile:shadow-none">
+          <header className="flex sm:hidden mx-4 top-[1%] items-center my-4 justify-between gap-4 ">
+            <Link
+              href={`/addLink/${userId}`}
+              className="rounded-[0.8rem] border text-center border-[#633cff] text-[#633cff] px-[1.69rem] sm:px-[2.7rem] py-2 sm:py-[1.1rem] text-[1rem] font-semibold leading-[150%]  mobile:px-8"
+            >
+              Back to Editor
+            </Link>
+            <button
+              className="rounded-[0.8rem] bg-[#633cff] px-[1.69rem] sm:px-[2.7rem] py-2 sm:py-[1.1rem] text-[1rem] font-semibold leading-[150%] text-white mobile:px-8"
+              onClick={handleClipboardCopy}
+            >
+              Share Link
+            </button>
+          </header>
+          <div className="absolute left-1/2 top-[5rem] sm:top-[15rem] flex w-3/4 sm:w-[21.8125rem] -translate-x-1/2 flex-col items-center rounded-[2.4rem] bg-white px-4  sm:px-[3.6rem] py-[3rem] shadow-dark-sh mobile:static mobile:w-full mobile:translate-x-0 mobile:shadow-none">
             {/* picture */}
             {currentUserIdData?.profileImage ? (
               <Image
@@ -113,7 +127,7 @@ const PreviewPage = () => {
             </div>
 
             <div className="flex flex-col w-full gap-4">
-              {[...Array(5)].map((_, index) => (
+              {[...Array(linkAdd.length)].map((_, index) => (
                 <React.Fragment key={index}>
                   {linkAdd[index] ? (
                     <Link href={linkAdd[index].link} target="blank">

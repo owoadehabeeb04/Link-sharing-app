@@ -233,7 +233,7 @@ const CustomizeProfileDetails = () => {
         </div>
       ) : (
         <div className="flex grid-cols-2 mt-10 gap-6 mx-6 ">
-          <div className="shadow-4xl  hidden self-start h-full w-[40rem] xl:w-[65rem]   max-w-full py-[6rem] border-solid border-2 rounded-[0.75rem] border-[#fff] px-[4rem] lg:flex flex-col bg-[#fff] justify-center items-center">
+          <div className="shadow-4xl  max-[1180px]:hidden  self-start h-full w-[40rem] xl:w-[65rem]   max-w-full py-[6rem] border-solid border-2 rounded-[0.75rem] border-[#fff] px-[4rem] flex flex-col bg-[#fff] justify-center items-center">
             <div className="relative w-[304px] flex flex-col items-start justify-start max-w-full">
               <Image src={customize} width={304} height={615} alt="phone" />
               <Image
@@ -367,64 +367,65 @@ const CustomizeProfileDetails = () => {
               </div>
             </div>
           </div>
-          <div className="bg-[#FFF] w-[100%]  h-full p-[2.5rem] rounded-[0.75rem] ">
+          <div className="bg-[#FFF] w-[100%]  h-full p-4 max-[320px]:p-0 sm:p-[2.5rem] rounded-[0.75rem] ">
             <div>
-              <h1 className="text-[#333] text-[2rem] font-bold leading-[150%]">
+              <h1 className="text-[#333] text-[1.5rem] sm:text-[2rem] font-bold leading-[150%]">
                 Profile Details{" "}
               </h1>
               <p className="text-[#737373] text-base font-normal leading-[150%] ">
                 Add your details to create a personal touch to your profile.
               </p>
             </div>
-            <div className="flex gap-6  p-[1.25rem]  bg-[#FAFAFA]   rounded-[0.75rem]  items-center mt-[2.5rem]">
-              <div className="sm:w-[35%]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-6  p-[1.25rem]  bg-[#FAFAFA]   rounded-[0.75rem]  items-center mt-[2.5rem]">
+              <div className="lg:w-[35%]">
                 <p className="text-[#737373] text-base font-normal leading-[150%] ">
                   Profile picture{" "}
                 </p>{" "}
               </div>
-
-              {currentUserIdData.profileImage === "" ? (
-                <label className="flex justify-center sm:w-[35%] py-[3.8rem] items-center flex-col bg-[#EFEBFF] rounded-[0.75rem]">
-                  <Image src={addimage} alt="image" width={40} height={40} />
-                  <input type="file" hidden onChange={handleFileChange} />
-                  <p className="text-center cursor-pointer text-[#633CFF] text-base font-semibold leading-[150%]">
-                    + Upload Image
-                  </p>
-                </label>
-              ) : (
-                <div className="relative sm:w-[35%]  items-center flex-col rounded-[0.75rem]">
-                  <Image
-                    src={currentUserIdData.profileImage}
-                    alt="profileimage"
-                    className="rounded-[0.875rem] w-full h-full object-cover"
-                    width={204}
-                    height={204}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-[0.875rem]">
-                    <label className="text-center flex justify-center items-center flex-col cursor-pointer text-[#fff] text-base font-semibold leading-[150%]">
-                      <Image
-                        src={changeimage}
-                        width={40}
-                        height={40}
-                        className=""
-                        alt="change image"
-                      />
-                      <input type="file" hidden onChange={handleFileChange} />
-                      Change Image
-                    </label>
+              <div className="flex sm:flex-row flex-col  sm:items-center gap-[1.5rem]">
+                {currentUserIdData.profileImage === "" ? (
+                  <label className="flex justify-center max-[640px]:w-[70%] lg:w-[35%] py-[3.8rem] items-center flex-col bg-[#EFEBFF] rounded-[0.75rem]">
+                    <Image src={addimage} alt="image" width={40} height={40} />
+                    <input type="file" hidden onChange={handleFileChange} />
+                    <p className="text-center cursor-pointer text-[#633CFF] text-base font-semibold leading-[150%]">
+                      + Upload Image
+                    </p>
+                  </label>
+                ) : (
+                  <div className="relative lg:w-[35%] max-[370px]:w-full max-[640px]:w-[70%]  items-center flex-col rounded-[0.75rem]">
+                    <Image
+                      src={currentUserIdData.profileImage}
+                      alt="profileimage"
+                      className="rounded-[0.875rem] w-full h-full object-cover"
+                      width={204}
+                      height={204}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-[0.875rem]">
+                      <label className="text-center flex justify-center items-center flex-col cursor-pointer text-[#fff] text-[0.7rem] sm:text-base font-semibold leading-[150%]">
+                        <Image
+                          src={changeimage}
+                          width={40}
+                          height={40}
+                          className=" w-1/2"
+                          alt="change image"
+                        />
+                        <input type="file" hidden onChange={handleFileChange} />
+                        Change Image
+                      </label>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              <p className="text-[#737373] sm:w-[30%] text-[0.75rem] font-normal leading-[150%]">
-                Image must be below 1024x1024px. Use PNG or JPG format.
-              </p>
+                <p className="text-[#737373] sm:w-[30%] text-[0.75rem] font-normal leading-[150%]">
+                  Image must be below 1024x1024px. Use PNG or JPG format.
+                </p>
+              </div>
             </div>
 
             {/* input */}
             <div className="p-6 relative mt-[1.5rem] rounded-[0.75rem] flex flex-col bg-[#FAFAFA] gap-[0.75rem]">
-              <div className="flex justify-center relative gap-4 items-center">
-                <h1 className="text-[#737373] w-[15rem] max-w-full text-base font-normal leading-[150%]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex justify-center relative gap-0 sm:gap-4 items-center">
+                <h1 className="text-[#737373] w-[15rem] max-w-full text-[0.75rem] sm:text-base font-normal leading-[150%]">
                   First name*
                 </h1>
                 <input
@@ -445,8 +446,8 @@ const CustomizeProfileDetails = () => {
                   </p>
                 )}
               </div>
-              <div className="flex  relative justify-center gap-4 items-center">
-                <h1 className="text-[#737373] w-[15rem] max-w-full text-base font-normal leading-[150%]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex justify-center relative gap-0 sm:gap-4 items-center">
+                <h1 className="text-[#737373] w-[15rem] max-w-full text-[0.75rem] sm:text-base font-normal leading-[150%]">
                   Last name*
                 </h1>
                 <input
@@ -467,8 +468,8 @@ const CustomizeProfileDetails = () => {
                   </p>
                 )}
               </div>
-              <div className="flex justify-center gap-4 items-center">
-                <h1 className="text-[#737373] w-[15rem] max-w-full text-base font-normal leading-[150%]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex justify-center relative gap-0 sm:gap-4 items-center">
+                <h1 className="text-[#737373] w-[15rem] max-w-full text-[0.75rem] sm:text-base font-normal leading-[150%]">
                   Email
                 </h1>
                 <input
@@ -487,7 +488,7 @@ const CustomizeProfileDetails = () => {
                 onClick={() => handleSave(0)}
                 className={`${
                   saveLoading ? "bg-[#BEADFF]" : "bg-[#633CFF]"
-                } text-white mt-[1.5rem] rounded-[0.5rem] cursor-pointer bg-[#633CFF]  py-[0.6875rem] px-[1.6875rem] text-base font-semibold leading-[150%]`}
+                } text-white mt-[1.5rem] sm:w-fit w-full rounded-[0.5rem] cursor-pointer bg-[#633CFF]  py-[0.6875rem] px-[1.6875rem] text-base font-semibold leading-[150%]`}
               >
                 Save
               </button>

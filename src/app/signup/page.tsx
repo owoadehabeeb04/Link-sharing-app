@@ -141,7 +141,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="bg-white flex w-full justify-center  h-screen transition-all  items-center">
+    <div className="bg-white flex w-full justify-center sm:mt-0 mt-8  sm:h-screen transition-all  items-center">
       <div className="border-2 border-white w-[550px] max-w-full   pb-[2.5rem]  transition-all px-[2rem] sm:px-[2.5rem] border-solid shadow-lg flex flex-col gap-[3.19rem] ">
         <div className="flex sm:justify-center justify-start  transition-all items-center gap-2">
           <Image src={devlinks} width="40" height="40" alt="devlinks" />
@@ -179,7 +179,10 @@ const Signup = () => {
                         : "border-[#D9D9D9]"
                     }`}
                     placeholder="e.g. alex@email.com"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setErrorEmail("");
+                    }}
                   />
                   <Image
                     src={email}
@@ -214,7 +217,10 @@ const Signup = () => {
                         : "border-[#D9D9D9]"
                     }`}
                     placeholder="Enter your password"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setErrorPassword("");
+                    }}
                   />
                   <Image
                     src={password}
@@ -251,7 +257,10 @@ const Signup = () => {
                         : "border-[#D9D9D9]"
                     }`}
                     placeholder="Enter your password"
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      setErrorConfirmPassword("");
+                    }}
                   />
                   <Image
                     src={password}

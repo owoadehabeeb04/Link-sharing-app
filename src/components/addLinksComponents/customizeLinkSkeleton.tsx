@@ -198,7 +198,9 @@ const CustomizeLinkSkeleton = () => {
     validateLinks();
     console.log(errors);
     // Check if there are no errors for the specific index
-    if (errors.length === 0) {
+    if(linkAdd.length === 0) {
+      toast.error('kindly pick a link')
+    }else if (errors.length === 0) {
       // Proceed with saving or other logic
       let newUserIdData = currentUserIdData;
       newUserIdData.Links = linkAdd;
@@ -366,12 +368,12 @@ const CustomizeLinkSkeleton = () => {
               </div>
             </div>
           </div>
-          <div className="bg-[#FFF] w-[100%]  h-full p-[2.5rem] rounded-[0.75rem] ">
+          <div className="bg-[#FFF] w-[100%]  h-full p-4 max-[320px]:p-0 sm:p-[2.5rem] rounded-[0.75rem] ">
             <div>
-              <h1 className="text-[#333] text-[2rem] font-bold leading-[150%]">
+              <h1 className="text-[#333] text-[1.5rem] sm:text-[2rem] font-bold leading-[150%]">
                 Customize your links
               </h1>
-              <p className="text-[#737373 text-base font-normal leading-[150%] ">
+              <p className="text-[#737373] text-base font-normal leading-[150%] ">
                 Add/edit/remove links below and then share all your profiles
                 with the world!
               </p>
@@ -389,7 +391,7 @@ const CustomizeLinkSkeleton = () => {
                     {linkAdd.map((links: addLinkprops, i: number) => (
                       <div
                         key={i}
-                        className="flex flex-col w-full  p-[1.25rem] bg-[#FAFAFA] rounded-[0.75rem] mt-[1.5rem] justify-start items-start "
+                        className="flex flex-col w-full max-[320px]:p-2 p-[1.25rem] bg-[#FAFAFA] rounded-[0.75rem] mt-[1.5rem] justify-start items-start "
                       >
                         <div className=" transition-all flex text-[#737373] w-full text-base font-bold leading-[150%] items-center justify-between">
                           <h1>Link#{i + 1}</h1>
@@ -540,12 +542,12 @@ const CustomizeLinkSkeleton = () => {
                 <EmptyLink />
               </div>
             )}
-            <hr className="bg-[#D9D9D9] mt-[2.5rem]" />
+            <hr className="bg-[#D9D9D9] mt-[2rem] sm:mt-[2.5rem]" />
             <div className="flex justify-end items-end">
               {/* {allLinksMatch && ( */}
               <button
                 onClick={() => handleSave(0)}
-                className="text-white mt-[1.5rem] rounded-[0.5rem] cursor-pointer bg-[#633CFF]  py-[0.6875rem] px-[1.6875rem] text-base font-semibold leading-[150%]"
+                className="text-white mt-[1.5rem] sm:w-fit w-full rounded-[0.5rem] cursor-pointer bg-[#633CFF]  py-[0.6875rem] px-[1.6875rem] text-base font-semibold leading-[150%]"
               >
                 Save
               </button>
