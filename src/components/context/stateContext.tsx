@@ -9,7 +9,12 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-
+interface addLinkprops {
+name: string;
+link: string;
+image?: string;
+backgroundColor?: string;
+}
 interface ContextProps {
   currentUserIdData: any;
   setCurrentUserIdData: React.Dispatch<React.SetStateAction<userProps[]>>;
@@ -19,6 +24,8 @@ interface ContextProps {
   setUserDetails: React.Dispatch<React.SetStateAction<userProps[]>>;
   links: linkProps[];
   setLinks: React.Dispatch<React.SetStateAction<linkProps[]>>;
+  linkAdd: addLinkprops[];
+  setLinkAdd: React.Dispatch<React.SetStateAction<addLinkprops[]>>;
 }
 
 const Context = createContext<ContextProps | undefined>(undefined);
@@ -32,6 +39,13 @@ export const StateContext: React.FC<StateContextProps> = ({ children }) => {
   const [currentUserIdData, setCurrentUserIdData] = useState<userProps[]>([]);
   const [activePage, setActivePage] = useState("");
   const [links, setLinks] = useState<linkProps[]>([]);
+  const [linkAdd, setLinkAdd] = useState<addLinkprops[]>([
+    {
+      name: "Github",
+      link: "https://www.github.com/",
+      image: "",
+    },
+  ]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -68,6 +82,8 @@ export const StateContext: React.FC<StateContextProps> = ({ children }) => {
         setActivePage,
         setLinks,
         links,
+        setLinkAdd,
+        linkAdd
       }}
     >
       {children}

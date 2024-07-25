@@ -14,20 +14,21 @@ import { useStateContext } from "../context/stateContext";
 import {
   getShowUser,
   linksOfUsersAndFirstNameAndLastName,
-  removeLinkByIndex,
 } from "@/app/api/user";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Loader from "../loader";
 
+type openDropDownState = {
+  boolean1: boolean;
+};
 interface addLinkprops {
   name: string;
   link: string;
   image?: string;
   backgroundColor?: string;
 }
-type openDropDownState = {
-  boolean1: boolean;
-};
 const initialState: openDropDownState[] = [{ boolean1: false }];
 const CustomizeLinkSkeleton = () => {
   const router = useRouter();
@@ -38,13 +39,7 @@ const CustomizeLinkSkeleton = () => {
     currentUserIdData,
     setCurrentUserIdData,
   } = useStateContext();
-  const [linkAdd, setLinkAdd] = useState<addLinkprops[]>([
-    {
-      name: "",
-      link: "",
-      image: "",
-    },
-  ]);
+  const { linkAdd, setLinkAdd } = useStateContext();
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
@@ -58,14 +53,16 @@ const CustomizeLinkSkeleton = () => {
         const currentUserData: any = users.find(
           (user: userProps) => user.userId === userId
         );
+        console.log(currentUserData);
 
         if (currentUserData) {
           setCurrentUserIdData(currentUserData);
-          if (currentUserData?.links) setLinkAdd(currentUserData?.links);
+          if (currentUserData?.links[0].name !== "")
+            setLinkAdd(currentUserData?.links);
           setIsLoading(false);
         } else {
-          router.push("/signup");
-          toast.error("You need to sign in first to use this web app");
+          // router.push("/signup");
+          // toast.error("You need to sign in first to use this web app");
         }
         console.log({ currentUserIdData });
       } catch (error) {
@@ -97,12 +94,16 @@ const CustomizeLinkSkeleton = () => {
     index: number;
     website: string;
   } | null>(null);
-
   const toggleDropDown = (index: number) => {
     const key = `boolean${index + 1}`;
 
     setOpenDropDown((prevOpenDown: any) => {
       const newDropDown = [...prevOpenDown];
+
+      if (!newDropDown[index]) {
+        newDropDown[index] = {};
+      }
+
       newDropDown[index] = {
         ...newDropDown[index],
         [key]: !newDropDown[index][key],
@@ -114,6 +115,7 @@ const CustomizeLinkSkeleton = () => {
       prev?.index === index ? null : { index, website: "" }
     );
   };
+
   const handleWebsiteSelect = (
     index: number,
     website: { link: string; image?: string; name: string }
@@ -226,7 +228,8 @@ const CustomizeLinkSkeleton = () => {
     <>
       {isLoading ? (
         <div className="flex justify-center items-center">
-          <h1>LOADING...</h1>
+          {/* <h1>LOADING...</h1> */}
+          <Loader />
         </div>
       ) : (
         <div className="flex grid-cols-2 mt-10 gap-6 mx-6 ">
@@ -241,7 +244,7 @@ const CustomizeLinkSkeleton = () => {
                 alt="phone"
               />
               {/* profile image */}
-              <div className="flex justify-center  absolute top-24 left-[23%] flex-col items-center gap-6">
+              <div className="flex justify-center  absolute top-24 left-[-50%] right-[-50%] flex-col items-center gap-6">
                 {currentUserIdData && currentUserIdData.profileImage === "" ? (
                   <div className="bg-[#EEE] border-solid border rounded-[50%] border-[#EEE] w-[6rem] h-[6rem] flex justify-center items-center"></div>
                 ) : (
@@ -290,68 +293,71 @@ const CustomizeLinkSkeleton = () => {
                 {[...Array(5)].map((_, index) => (
                   <React.Fragment key={index}>
                     {linkAdd[index] ? (
-                      <div
-                        className="h-[2.75rem] cursor-pointer justify-between px-4 flex items-center w-full rounded-[0.5rem]"
-                        style={{
-                          backgroundColor:
-                            websites.find(
+                      <Link href={linkAdd[index].link} target="blank">
+                        <div
+                          className="h-[2.75rem] cursor-pointer justify-between px-4 flex items-center w-full rounded-[0.5rem]"
+                          // onClick={() => router.push(linkAdd[index].link)}
+                          style={{
+                            backgroundColor:
+                              websites.find(
+                                (web) =>
+                                  web.name.toLowerCase() ===
+                                  linkAdd[index].name.toLowerCase()
+                              )?.backgroundColor || "#EEE",
+                            color:
+                              linkAdd[index].name.toLowerCase() ===
+                              "frontend mentor"
+                                ? "#333"
+                                : websites.find(
+                                    (web) =>
+                                      web.name.toLowerCase() ===
+                                      linkAdd[index].name.toLowerCase()
+                                  )?.textColor || "#000",
+                            border:
+                              linkAdd[index].name.toLowerCase() ===
+                              "frontend mentor"
+                                ? "1px solid #D9D9D9"
+                                : "none",
+                          }}
+                        >
+                          <div className="flex items-center gap-2">
+                            {websites.find(
                               (web) =>
                                 web.name.toLowerCase() ===
                                 linkAdd[index].name.toLowerCase()
-                            )?.backgroundColor || "#EEE",
-                          color:
-                            linkAdd[index].name.toLowerCase() ===
-                            "frontend mentor"
-                              ? "#333"
-                              : websites.find(
-                                  (web) =>
-                                    web.name.toLowerCase() ===
-                                    linkAdd[index].name.toLowerCase()
-                                )?.textColor || "#000",
-                          border:
-                            linkAdd[index].name.toLowerCase() ===
-                            "frontend mentor"
-                              ? "1px solid #D9D9D9"
-                              : "none",
-                        }}
-                      >
-                        <div className="flex items-center gap-2">
-                          {websites.find(
-                            (web) =>
-                              web.name.toLowerCase() ===
-                              linkAdd[index].name.toLowerCase()
-                          )?.image && (
-                            <Image
-                              className=""
-                              src={
-                                websites.find(
-                                  (web) =>
-                                    web.name.toLowerCase() ===
-                                    linkAdd[index].name.toLowerCase()
-                                )?.previewImage
-                              }
-                              alt={linkAdd[index]?.name}
-                              height={16}
-                              width={16}
-                            />
-                          )}
-                          <h1 className="text-[0.75rem] font-normal leading-[150%]">
-                            {linkAdd[index]?.name}
-                          </h1>
+                            )?.image && (
+                              <Image
+                                className=""
+                                src={
+                                  websites.find(
+                                    (web) =>
+                                      web.name.toLowerCase() ===
+                                      linkAdd[index].name.toLowerCase()
+                                  )?.previewImage
+                                }
+                                alt={linkAdd[index]?.name}
+                                height={16}
+                                width={16}
+                              />
+                            )}
+                            <h1 className="text-[0.75rem] font-normal leading-[150%]">
+                              {linkAdd[index]?.name}
+                            </h1>
+                          </div>
+                          <Image
+                            className=""
+                            src={
+                              linkAdd[index].name.toLowerCase() ===
+                              "frontend mentor"
+                                ? arrowFrontendMentor
+                                : arrow
+                            }
+                            alt="arrow"
+                            width={16}
+                            height={16}
+                          />
                         </div>
-                        <Image
-                          className=""
-                          src={
-                            linkAdd[index].name.toLowerCase() ===
-                            "frontend mentor"
-                              ? arrowFrontendMentor
-                              : arrow
-                          }
-                          alt="arrow"
-                          width={16}
-                          height={16}
-                        />
-                      </div>
+                      </Link>
                     ) : (
                       <div className="h-[2.75rem] w-full rounded-[0.5rem] bg-[#EEE]"></div>
                     )}

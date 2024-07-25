@@ -10,6 +10,7 @@ import eye from "../../../public/eye.svg";
 import { useStateContext } from "../context/stateContext";
 import { auth } from "@/utils/firebaseconfig";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 interface navProps {
   item: string;
   active: string;
@@ -81,16 +82,19 @@ const Navbar = () => {
         </div>
 
         <div>
-          <button className="flex py-[0.6875rem] text-[#633CFF] transition-all hover:bg-[#EFEBFF] px-[1.6875rem] gap-2 rounded-[0.5rem] border border-solid border-[#633CFF] text-base font-semibold   items-start  ">
-            <Image
-              className="sm:hidden block"
-              src={eye}
-              width={18}
-              height={18}
-              alt="eye"
-            />
-            <span className="sm:block hidden">Preview</span>
-          </button>
+          <Link href={`/preview/${userId}`}>
+            {" "}
+            <button className="flex py-[0.6875rem] text-[#633CFF] transition-all hover:bg-[#EFEBFF] px-[1.6875rem] gap-2 rounded-[0.5rem] border border-solid border-[#633CFF] text-base font-semibold   items-start  ">
+              <Image
+                className="sm:hidden block"
+                src={eye}
+                width={18}
+                height={18}
+                alt="eye"
+              />
+              <span className="sm:block hidden">Preview</span>
+            </button>
+          </Link>
         </div>
       </div>
     </div>

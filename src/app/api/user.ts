@@ -30,7 +30,7 @@ export const uploadImageFile = async (path: string, file: File) => {
   try {
     const snapshot = await uploadBytes(storageRef, file);
     url = await getDownloadURL(snapshot.ref);
-    
+    console.log({ url });
   } catch (error) {
     console.error("Upload error:", error);
     throw error; // Re-throw the error after logging it
@@ -95,8 +95,32 @@ export const UpdateImage = async (userId: any, newProfileImage?: string) => {
       userItemRef,
       {
         profileImage: newProfileImage,
-      }
-      // { merge: true }
+      },
+      { merge: true }
+    );
+    console.log("successfully");
+
+    console.log("updated item:", userId);
+  } catch (error) {
+    console.error("Error updating in firebase:", error);
+    throw error;
+  }
+};
+export const updateFirstNameLastName = async (
+  userId: any,
+  newFirstName?: string,
+  newLastName?: string
+) => {
+  try {
+    const userItemRef = doc(db, "Users", userId);
+    console.log("clicking o,", userId);
+    await setDoc(
+      userItemRef,
+      {
+        firstName: newFirstName,
+        lastName: newLastName,
+      },
+      { merge: true }
     );
     console.log("successfully");
 
