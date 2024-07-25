@@ -57,8 +57,9 @@ const CustomizeLinkSkeleton = () => {
 
         if (currentUserData) {
           setCurrentUserIdData(currentUserData);
-          if (currentUserData?.links[0].name !== "")
+          if (currentUserData?.links[0].name !== "") {
             setLinkAdd(currentUserData?.links);
+          }
           setIsLoading(false);
         } else {
           // router.push("/signup");
@@ -198,9 +199,9 @@ const CustomizeLinkSkeleton = () => {
     validateLinks();
     console.log(errors);
     // Check if there are no errors for the specific index
-    if(linkAdd.length === 0) {
-      toast.error('kindly pick a link')
-    }else if (errors.length === 0) {
+    if (linkAdd.length === 0) {
+      toast.error("kindly pick a link");
+    } else if (errors.length === 0) {
       // Proceed with saving or other logic
       let newUserIdData = currentUserIdData;
       newUserIdData.Links = linkAdd;

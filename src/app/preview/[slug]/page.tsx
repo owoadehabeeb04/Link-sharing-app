@@ -42,7 +42,9 @@ const PreviewPage = () => {
         if (currentUserData) {
           setCurrentUserIdData(currentUserData);
           console.log(currentUserData?.links);
-          if (currentUserData?.links) setLinkAdd(currentUserData?.links);
+          if (currentUserData?.links[0].name !== "") {
+            setLinkAdd(currentUserData?.links);
+          }
           setIsLoading(false);
         } else {
           // router.push("/signup");

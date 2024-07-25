@@ -63,7 +63,9 @@ const CustomizeProfileDetails = () => {
         if (currentUserData) {
           setCurrentUserIdData(currentUserData);
           console.log(currentUserData?.links);
-          if (currentUserData?.links) setLinkAdd(currentUserData?.links);
+          if (currentUserData?.links[0].name !== "") {
+            setLinkAdd(currentUserData?.links);
+          }
           setIsLoading(false);
         } else {
           // router.push("/signup");
@@ -384,7 +386,7 @@ const CustomizeProfileDetails = () => {
               </div>
               <div className="flex sm:flex-row flex-col  sm:items-center gap-[1.5rem]">
                 {currentUserIdData.profileImage === "" ? (
-                  <label className="flex justify-center max-[640px]:w-[70%] lg:w-[35%] py-[3.8rem] items-center flex-col bg-[#EFEBFF] rounded-[0.75rem]">
+                  <label className="flex justify-center max-[640px]:w-[70%]  p py-[3.8rem] sm:w-[100%] lg:w-[50%] items-center flex-col bg-[#EFEBFF] rounded-[0.75rem]">
                     <Image src={addimage} alt="image" width={40} height={40} />
                     <input type="file" hidden onChange={handleFileChange} />
                     <p className="text-center cursor-pointer text-[#633CFF] text-base font-semibold leading-[150%]">
