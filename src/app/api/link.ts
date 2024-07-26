@@ -32,7 +32,6 @@ export const getShowLink = async () => {
       backgroundColor: doc.data().backgroundColor ?? doc.data().backgroundColor,
     });
   });
-  console.log(links);
   return links;
 };
 
@@ -43,7 +42,6 @@ export const getShowLinkOfCurrentUser = async (userId: any) => {
   try {
     const querySnapshot = await getDocs(q);
 
-    console.log(querySnapshot);
     let links = [] as linkProps[];
 
     querySnapshot.forEach((doc) => {
@@ -56,7 +54,6 @@ export const getShowLinkOfCurrentUser = async (userId: any) => {
       });
     });
 
-    console.log(links);
     return links;
   } catch (error) {
     console.error("Error fetching links for current user:", error);

@@ -12,8 +12,18 @@ import arrow from "../../../../public/arrow.svg";
 import arrowFrontendMentor from "../../../../public/arrowFrontendmentor.svg";
 import link from "../../../../public/link.svg";
 import Loader from "@/components/loader";
-const PreviewPage = () => {
+import toast from "react-hot-toast";
+import { onAuthStateChanged } from "firebase/auth";
+type PreviewPageProps = {
+  params: {
+    slug: string;
+  };
+};
+
+const PreviewPage = ({ params }: PreviewPageProps) => {
   const router = useRouter();
+  const { slug }: { slug: string | undefined } = params;
+  console.log({ slug });
   const userId = auth.currentUser?.uid;
 
   const {
@@ -25,18 +35,33 @@ const PreviewPage = () => {
   const { linkAdd, setLinkAdd } = useStateContext();
   const [isLoading, setIsLoading] = useState(true);
   const [isCopied, setIsCopied] = useState(false);
+
+  const [userBoolean, setUserBoolean] = useState(false);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+      } else {
+        setUserBoolean(true)
+        console.log("logged out")
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const userId = auth.currentUser?.uid;
+        console.log({ userId });
+      
+
         setIsLoading(true);
         const users = await getShowUser();
         console.log({ users });
         setUserDetails(users);
 
-        const userId = auth.currentUser?.uid;
-        console.log(userId);
-        const currentUserData: any = users.find(
-          (user: userProps) => user.userId === userId
+        const currentUserData: any = users.find((user: userProps) =>
+          userBoolean === false ? user.userId === slug : user.userId === userId
         );
         console.log(currentUserData);
         if (currentUserData) {
@@ -45,11 +70,12 @@ const PreviewPage = () => {
           if (currentUserData?.links[0].name !== "") {
             setLinkAdd(currentUserData?.links);
           }
-          setIsLoading(false);
         } else {
           // router.push("/signup");
           // toast.error("You need to sign in first to use this web app");
         }
+        setIsLoading(false);
+
         console.log({ currentUserIdData });
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -59,6 +85,8 @@ const PreviewPage = () => {
     fetchData();
   }, []);
 
+
+
   function handleClipboardCopy() {
     navigator.clipboard.writeText(window.location.href);
     setIsCopied(true);
@@ -67,7 +95,12 @@ const PreviewPage = () => {
       setIsCopied(false);
     }, 3000);
   }
-
+  const linkToAddlink = () => {
+    if (userBoolean === false) {
+      router.push(`/addLink/${userId}`);
+    } else toast.error("sorry, you cant edit this lnk cos you are not the owner of the account");
+  };
+  console.log({ currentUserIdData });
   return (
     <section className="relative min-h-[100dvh] mobile:bg-white">
       {isLoading ? (
@@ -75,22 +108,21 @@ const PreviewPage = () => {
       ) : (
         <div>
           <div className="sm:h-[25rem] relative rounded-[0_0_3.2rem_3.2rem] sm:bg-[#633cff] hidd sm:flex"></div>
-          {userId && (
-            <header className="sm:flex hidden absolute top-[2.4rem] left-[-0.1%] mx-[2.4rem]  w-[100%] items-center justify-between rounded-[1.2rem] bg-white px-[1rem] py-[1rem] mobile:static sm:mx-0">
-              <Link
-                href={`/addLink/${userId}`}
-                className="rounded-[0.8rem] border border-[#633cff] text-[#633cff] px-[2.7rem] py-[1.1rem] text-[1rem] font-semibold leading-[150%]  mobile:px-8"
-              >
-                Back to Editor
-              </Link>
-              <button
-                className="rounded-[0.8rem] bg-[#633cff] px-[2.7rem] py-[1.1rem] text-[1rem] font-semibold leading-[150%] text-white mobile:px-8"
-                onClick={handleClipboardCopy}
-              >
-                Share Link
-              </button>
-            </header>
-          )}
+
+        {  <header className="sm:flex hidden absolute top-[2.4rem] left-[-0.1%] mx-[2.4rem]  w-[100%] items-center justify-between rounded-[1.2rem] bg-white px-[1rem] py-[1rem] mobile:static sm:mx-0">
+            <div
+              onClick={linkToAddlink}
+              className="rounded-[0.8rem] border border-[#633cff] text-[#633cff] px-[2.7rem] py-[1.1rem] text-[1rem] font-semibold leading-[150%]  mobile:px-8"
+            >
+              Back to Editor
+            </div>
+            <button
+              className="rounded-[0.8rem] bg-[#633cff] px-[2.7rem] py-[1.1rem] text-[1rem] font-semibold leading-[150%] text-white mobile:px-8"
+              onClick={handleClipboardCopy}
+            >
+              Share Link
+            </button>
+          </header>}
           <header className="flex sm:hidden mx-4 top-[1%] items-center my-4 justify-between gap-4 ">
             <Link
               href={`/addLink/${userId}`}
@@ -206,10 +238,16 @@ const PreviewPage = () => {
           </div>
 
           {isCopied && (
-            <div className="absolute bottom-[3rem] left-1/2 flex w-full max-w-[39.7rem] -translate-x-1/2 items-center gap-[0.8rem] rounded-[1.2rem] bg-[#333] px-[2.4rem] py-[1.6rem]">
+            <div className="fixed bottom-[0rem] left-[-50%] right-[-50%]  flex w-full sm:w-fit mx-auto  justify-center  items-center gap-[0.8rem] rounded-[1.2rem] bg-[#333] px-4 sm:px-[1.5rem] py-4 sm:py-[1.5rem]">
               {/* <HiOutlineLink size={"2rem"} color={"#737373"} /> */}
-              <Image src={link} width={16} height={16} alt="copy" />
-              <p className="text-[1.6rem] font-semibold leading-[2.4rem] text-[#fafafa]">
+              <Image
+                className="flex justify-center items-center"
+                src={link}
+                width={16}
+                height={16}
+                alt="copy"
+              />
+              <p className="text-[0.875rem] sm:text-[1rem] text-center font-semibold leading-[2.4rem] text-[#fafafa]">
                 The link has been copied to your clipboard!
               </p>
             </div>

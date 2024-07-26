@@ -5,5 +5,4 @@ export const errorMessages: Record<string, string> = {
   "auth/wrong-password": "The password is incorrect.",
   "auth/invalid-credential": "Invalid credentials provided.",
   "auth/email-already-in-use": "Email has been used, try another email"
-  // Add more mappings as needed
 };

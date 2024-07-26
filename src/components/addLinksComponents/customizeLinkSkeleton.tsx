@@ -165,6 +165,7 @@ const CustomizeLinkSkeleton = () => {
       i === index ? { ...link, link: newLink } : link
     );
     setLinkAdd(updatedLinks);
+    setErrors([""]);
   };
 
   const matchedLinks =

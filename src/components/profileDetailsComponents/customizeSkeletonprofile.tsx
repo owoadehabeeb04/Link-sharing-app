@@ -151,25 +151,28 @@ const CustomizeProfileDetails = () => {
             setImageURL(null);
             return;
           }
-
+  
           setImageFile(file);
           setImageURL(URL.createObjectURL(file));
-
+  
           try {
             setImageLoading(true);
             const userId = auth.currentUser?.uid;
-            let url = await uploadImageFile(
-              `profile-images/${imageFile?.name}`,
-              imageFile
-            ); // Ensure a unique path
-            setCurrentUserIdData((prevData: any) => ({
-              ...prevData,
-              profileImage: url,
-            }));
+            const filePath = `profile-images/${file.name}`;
+  
+            // Wait for the image file to be uploaded
+            let url = await uploadImageFile(filePath, file);
+  
             setImageURL(url);
             await UpdateImage(userId, url);
             setImageLoading(false);
-
+            if (url) {
+              setCurrentUserIdData((prevData: any) => ({
+                ...prevData,
+                profileImage: url,
+              }));
+            }
+            console.log({ url });
             console.log({ currentUserIdData });
           } catch (err) {
             console.error(err);
@@ -182,7 +185,7 @@ const CustomizeProfileDetails = () => {
       }
     }
   };
-
+  
   useEffect(() => {
     console.log({ imageURL });
   }, [imageURL]);
@@ -443,7 +446,7 @@ const CustomizeProfileDetails = () => {
                   placeholder="e.g. John"
                 />{" "}
                 {firstNameError && (
-                  <p className="text-red-500 absolute top-5 right-4 text-sm">
+                  <p className="text-red-500 sm:absolute  top-[2.45rem] sm:top-5 right-4 text-[0.75rem] sm:text-sm">
                     {firstNameError}
                   </p>
                 )}
@@ -465,7 +468,7 @@ const CustomizeProfileDetails = () => {
                   placeholder="e.g. Appleesed"
                 />{" "}
                 {lastNameError && (
-                  <p className="text-red-500 absolute top-5 right-4 text-sm">
+                  <p className="text-red-500 sm:absolute  top-[2.45rem] sm:top-5 right-4 text-[0.75rem] sm:text-sm">
                     {lastNameError}
                   </p>
                 )}

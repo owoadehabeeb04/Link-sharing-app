@@ -11,6 +11,7 @@ import { useStateContext } from "../context/stateContext";
 import { auth } from "@/utils/firebaseconfig";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
 interface navProps {
   item: string;
   active: string;
@@ -39,6 +40,18 @@ const Navbar = () => {
           : plainProfileDetails,
     },
   ];
+  const signOut = async (e: any) => {
+    console.log("Sign out button clicked");
+    try {
+      console.log(" signingout");
+      await auth.signOut();
+      router.push("/login");
+      toast.success("sign out succesfully");
+    } catch (err: any) {
+      console.error("Error during sign out:", err);
+      toast.error(`Error during sign out: ${err.message}`);
+    }
+  };
 
   return (
     <div className=" max-[320px]:mx-3 mx-[1.5rem] translate-y-4   rounded-[0.75rem] bg-[#fff]">
@@ -81,7 +94,16 @@ const Navbar = () => {
           ))}
         </div>
 
-        <div>
+        <div className="flex items-center gap-2">
+          {/* <Link href={`/preview/${userId}`}>
+            {" "}
+            <button
+              className="flex py-[0.6875rem] text-[#633CFF] transition-all bg-[#EFEBFF] hover:bg-[#fff] px-2 sm:px-[1.6875rem] gap-2 rounded-[0.5rem] border border-solid hover:border-[#633CFF] text-[0.5rem] sm:text-base font-semibold   items-start  "
+              onClick={signOut}
+            >
+              <span className="">Log out</span>
+            </button>
+          </Link> */}
           <Link href={`/preview/${userId}`}>
             {" "}
             <button className="flex py-[0.6875rem] text-[#633CFF] transition-all hover:bg-[#EFEBFF] px-[1.6875rem] gap-2 rounded-[0.5rem] border border-solid border-[#633CFF] text-base font-semibold   items-start  ">

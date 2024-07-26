@@ -30,7 +30,6 @@ export const uploadImageFile = async (path: string, file: File) => {
   try {
     const snapshot = await uploadBytes(storageRef, file);
     url = await getDownloadURL(snapshot.ref);
-    console.log({ url });
   } catch (error) {
     console.error("Upload error:", error);
     throw error; // Re-throw the error after logging it
@@ -45,7 +44,6 @@ export const getShowUser = async () => {
   const q = query(showUser);
   const querySnapshot = await getDocs(q);
 
-  console.log(querySnapshot);
   let users = [] as userProps[];
 
   querySnapshot.forEach((doc) => {
@@ -61,7 +59,6 @@ export const getShowUser = async () => {
       links: data.links || "",
     });
   });
-  console.log(users);
   return users;
 };
 
@@ -71,7 +68,6 @@ export const linksOfUsersAndFirstNameAndLastName = async (
 ) => {
   try {
     const userItemRef = doc(db, "Users", userId);
-    console.log("clicking o,", userId);
     await setDoc(
       userItemRef,
       {
@@ -80,7 +76,6 @@ export const linksOfUsersAndFirstNameAndLastName = async (
       { merge: true }
     );
 
-    console.log("updated item:", userId);
   } catch (error) {
     console.error("Error updating in firebase:", error);
     throw error;
