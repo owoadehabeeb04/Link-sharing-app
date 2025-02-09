@@ -175,49 +175,62 @@ const CustomizeLinkSkeleton = () => {
     );
   console.log({ matchedLinks });
   const validateLinks = () => {
-    const newErrors =
-      linkAdd &&
-      linkAdd.map((linkItem, index) => {
-        const website = websites.find((website) =>
-          linkItem.link.toLowerCase().startsWith(website.link.toLowerCase())
-        );
-
-        if (!linkItem.link.trim()) {
-          return "Link cannot be empty";
-        }
-
-        if (!website) {
-          return "Link NO valid";
-        }
-
-        return null;
-      });
-
+    const newErrors = linkAdd.map((linkItem) => {
+      if (!linkItem.link.trim()) {
+        return "Link cannot be empty";
+      }
+  
+      const website = websites.find((website) =>
+        linkItem.link.toLowerCase().startsWith(website.link.toLowerCase())
+      );
+  
+      if (!website) {
+        return "Link not valid";
+      }
+  
+      return null;
+    });
+    
     setErrors(newErrors);
+    return newErrors; // Return errors array
   };
-
+  const [saveLoading, setSaveLoading] = useState(false);
   const handleSave = async (index: number) => {
-    validateLinks();
-    console.log(errors);
-    // Check if there are no errors for the specific index
+    setSaveLoading(true);
     if (linkAdd.length === 0) {
       toast.error("kindly pick a link");
-    } else if (errors.length === 0) {
-      // Proceed with saving or other logic
-      let newUserIdData = currentUserIdData;
-      newUserIdData.Links = linkAdd;
-      console.log(newUserIdData);
-      const userId = auth.currentUser?.uid;
-
-      await linksOfUsersAndFirstNameAndLastName(userId, newUserIdData.Links);
-      setLinkAdd(newUserIdData.Links);
-      toast.success("saved links succesfully");
-      console.log("Link is valid for index", index);
+      return;
+    }
+  
+    const validationErrors = validateLinks();
+    const hasErrors = validationErrors.some(error => error !== null);
+  
+    if (!hasErrors) {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (!userId) {
+          toast.error("User not authenticated");
+          return;
+        }
+  
+        let newUserIdData = { ...currentUserIdData };
+        newUserIdData.Links = linkAdd;
+  
+        await linksOfUsersAndFirstNameAndLastName(userId, newUserIdData.Links);
+        setLinkAdd(newUserIdData.Links);
+        toast.success("saved links successfully");
+        setSaveLoading(false)
+      } catch (error) {
+        console.error("Error saving links:", error);
+        toast.error("Failed to save links");
+        setSaveLoading(false);
+      }
     } else {
-      console.log("Errors for index", index, ":", errors[index]);
+      const errorMessage = validationErrors[index] || "Invalid link format";
+      toast.error(errorMessage);
+      setSaveLoading(false);
     }
   };
-
   const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
@@ -253,13 +266,16 @@ const CustomizeLinkSkeleton = () => {
                   <div className="bg-[#EEE] border-solid border rounded-[50%] border-[#EEE] w-[6rem] h-[6rem] flex justify-center items-center"></div>
                 ) : (
                   <div className="bg-[#EEE] border-solid  rounded-[50%] border-4 border-[#633CFF] w-[6rem] h-[6rem] flex justify-center items-center">
-                    <Image
-                      src={currentUserIdData?.profileImage}
-                      className="rounded-[50%] object-cover"
-                      width={96}
-                      height={96}
-                      alt="profile image"
-                    />
+                                 <Image
+                                   src={currentUserIdData.profileImage}
+                                   className={`rounded-[50%] w-full h-full object-cover transition-opacity duration-300 
+                                   `}
+                                   width={96}
+                                   height={96}
+                                   alt="profile image"
+                                   loading="lazy"
+                                   
+                                 />
                   </div>
                 )}
                 <div className="flex justify-center items-center flex-col">
@@ -549,7 +565,9 @@ const CustomizeLinkSkeleton = () => {
               {/* {allLinksMatch && ( */}
               <button
                 onClick={() => handleSave(0)}
-                className="text-white mt-[1.5rem] sm:w-fit w-full rounded-[0.5rem] cursor-pointer bg-[#633CFF]  py-[0.6875rem] px-[1.6875rem] text-base font-semibold leading-[150%]"
+                className={` ${
+                    saveLoading && "bg-[#BEADFF] loading-email"
+                  } text-white mt-[1.5rem] sm:w-fit w-full rounded-[0.5rem] cursor-pointer bg-[#633CFF]  py-[0.6875rem] px-[1.6875rem] text-base font-semibold leading-[150%]`}
               >
                 Save
               </button>

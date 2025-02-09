@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/loader";
 import CustomizeProfileDetails from "@/components/profileDetailsComponents/customizeSkeletonprofile";
+import { ProtectedRoute } from "@/components/specialRoutes/protectedRoute";
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
@@ -20,8 +21,9 @@ const Profile = () => {
     setActivePage("profileDetails");
     setLoading(false);
   }, [setActivePage]);
-
   return (
+    <ProtectedRoute>
+
     <div>
       {loading ? (
         <div className="w-full flex justify-center items-center">
@@ -34,6 +36,7 @@ const Profile = () => {
         </div>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

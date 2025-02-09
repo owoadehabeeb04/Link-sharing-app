@@ -9,6 +9,11 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import { useRouter, usePathname } from 'next/navigation';
+import { onAuthStateChanged } from 'firebase/auth';
+import Loader from '../loader';
+import { useQuery } from "@tanstack/react-query";
+
 interface addLinkprops {
 name: string;
 link: string;
@@ -26,6 +31,8 @@ interface ContextProps {
   setLinks: React.Dispatch<React.SetStateAction<linkProps[]>>;
   linkAdd: addLinkprops[];
   setLinkAdd: React.Dispatch<React.SetStateAction<addLinkprops[]>>;
+  isAuthenticated: boolean;
+  usersLoading: boolean
 }
 
 const Context = createContext<ContextProps | undefined>(undefined);
@@ -46,30 +53,59 @@ export const StateContext: React.FC<StateContextProps> = ({ children }) => {
       image: "",
     },
   ]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  
+  const { data: users, isLoading: usersLoading } = useQuery({
+    queryKey: ['users'],
+    queryFn: getShowUser,
+  });
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const users = await getShowUser();
-        setUserDetails(users);
-
-        const userId = auth.currentUser?.uid;
-        console.log(userId);
-        const currentUserData: any = users.find(
-          (user: userProps) => user.userId === userId
-        );
-
-        if (currentUserData) {
-          setCurrentUserIdData(currentUserData);
-        } else {
-          console.log("User not found in userDetails array");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+    if (users) {
+      setUserDetails(users);
+      const userId = auth.currentUser?.uid;
+      const currentUser: any = users.find((user: userProps) => user.userId === userId);
+      if (currentUser) {
+        setCurrentUserIdData(currentUser);
       }
-    };
+    }
+  }, [users]);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user);
+      setIsLoading(false);
+    });
 
-    fetchData();
+    return () => unsubscribe();
   }, []);
+
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const users = await getShowUser();
+  //       setUserDetails(users);
+
+  //       const userId = auth.currentUser?.uid;
+  //       console.log(userId);
+  //       const currentUserData: any = users.find(
+  //         (user: userProps) => user.userId === userId
+  //       );
+
+  //       if (currentUserData) {
+  //         setCurrentUserIdData(currentUserData);
+  //       } else {
+  //         console.log("User not found in userDetails array");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching user data:", error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   return (
     <Context.Provider
@@ -83,7 +119,10 @@ export const StateContext: React.FC<StateContextProps> = ({ children }) => {
         setLinks,
         links,
         setLinkAdd,
-        linkAdd
+        linkAdd,
+        isAuthenticated,
+        usersLoading,
+        
       }}
     >
       {children}

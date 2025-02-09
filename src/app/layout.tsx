@@ -9,23 +9,24 @@ import {
 } from "@/components/context/stateContext";
 import { auth } from "@/utils/firebaseconfig";
 import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Providers from "@/providers";
 
 export const metadata: Metadata = {
   title: "Dev Link",
   description: "Link Sharing App",
 };
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body>
-        <StateContext>
-          <Toaster /> {children}
-        </StateContext>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

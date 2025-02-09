@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/loader";
 import CustomizeLinkSkeleton from "@/components/addLinksComponents/customizeLinkSkeleton";
+import { ProtectedRoute } from "@/components/specialRoutes/protectedRoute";
 
 const Addlink = () => {
   const [loading, setLoading] = useState(false);
@@ -20,9 +21,11 @@ const Addlink = () => {
     setActivePage("Links");
     setLoading(false);
   }, [setActivePage]);
-
   return (
+    <ProtectedRoute>
+
     <div>
+
       {loading ? (
         <div className="w-full flex justify-center items-center">
           <Loader />
@@ -33,7 +36,10 @@ const Addlink = () => {
           <CustomizeLinkSkeleton />
         </div>
       )}
+
     </div>
+    </ProtectedRoute>
+
   );
 };
 

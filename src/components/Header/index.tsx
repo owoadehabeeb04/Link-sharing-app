@@ -12,6 +12,7 @@ import { auth } from "@/utils/firebaseconfig";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { FiLogOut } from 'react-icons/fi';
 interface navProps {
   item: string;
   active: string;
@@ -94,19 +95,17 @@ const Navbar = () => {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* <Link href={`/preview/${userId}`}>
-            {" "}
-            <button
-              className="flex py-[0.6875rem] text-[#633CFF] transition-all bg-[#EFEBFF] hover:bg-[#fff] px-2 sm:px-[1.6875rem] gap-2 rounded-[0.5rem] border border-solid hover:border-[#633CFF] text-[0.5rem] sm:text-base font-semibold   items-start  "
-              onClick={signOut}
-            >
-              <span className="">Log out</span>
-            </button>
-          </Link> */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={signOut}
+            className="flex items-center py-[0.6875rem] text-red-500 transition-all hover:bg-red-50 px-4 gap-2 rounded-[0.5rem] border border-solid border-red-500 text-base font-semibold"
+          >
+            <FiLogOut className="w-4 h-4 sm:mr-1" />
+            <span className="sm:block hidden">Logout</span>
+          </button>
+
           <Link href={`/preview/${userId}`}>
-            {" "}
-            <button className="flex py-[0.6875rem] text-[#633CFF] transition-all hover:bg-[#EFEBFF] px-[1.6875rem] gap-2 rounded-[0.5rem] border border-solid border-[#633CFF] text-base font-semibold   items-start  ">
+            <button className="flex items-center py-[0.6875rem] text-[#633CFF] transition-all hover:bg-[#EFEBFF] px-4 gap-2 rounded-[0.5rem] border border-solid border-[#633CFF] text-base font-semibold">
               <Image
                 className="sm:hidden block"
                 src={eye}

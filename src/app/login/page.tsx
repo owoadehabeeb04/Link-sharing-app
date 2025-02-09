@@ -11,6 +11,7 @@ import { auth } from "@/utils/firebaseconfig";
 import { useRouter } from "next/navigation";
 import { errorMessages } from "@/utils/errorFirebaseMessage";
 import { useStateContext } from "@/components/context/stateContext";
+import { ProtectedRoute } from "@/components/specialRoutes/protectedRoute";
 const Login = () => {
   const [emailValue, setEmail] = useState("");
   const [errorEmail, setErrorEmail] = useState("");
@@ -18,6 +19,7 @@ const Login = () => {
   const [errorPassword, setErrorPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
   const { setActivePage } = useStateContext();
   const validateForm = () => {
     let isValid = true;
@@ -49,6 +51,7 @@ const Login = () => {
 
   const submitLogin = async () => {
     if (!validateForm()) {
+      console.log('not valid')
       return;
     }
     console.log("clicked");
@@ -85,6 +88,8 @@ const Login = () => {
   };
 
   return (
+    <ProtectedRoute>
+
     <div className="bg-white flex w-full justify-center mt-8 sm:mt-0   sm:h-screen transition-all  items-center">
       <div className="border-2 border-white  pb-[2.5rem]  transition-all px-[2rem] sm:px-[2.5rem] border-solid shadow-lg flex flex-col gap-[3.19rem] ">
         <div className="flex sm:justify-center justify-start  transition-all items-center gap-2">
@@ -204,6 +209,8 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
+
   );
 };
 

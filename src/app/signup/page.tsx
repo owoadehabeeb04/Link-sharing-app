@@ -14,6 +14,7 @@ import FirebaseError from "firebase/auth";
 import { errorMessages } from "@/utils/errorFirebaseMessage";
 import { createUser, getShowUser } from "../api/user";
 import { useStateContext } from "@/components/context/stateContext";
+import { ProtectedRoute } from "@/components/specialRoutes/protectedRoute";
 const Signup = () => {
   const [emailValue, setEmail] = useState("");
   const [errorEmail, setErrorEmail] = useState("");
@@ -141,6 +142,7 @@ const Signup = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="bg-white flex w-full justify-center sm:mt-0 mt-8  sm:h-screen transition-all  items-center">
       <div className="border-2 border-white w-[550px] max-w-full   pb-[2.5rem]  transition-all px-[2rem] sm:px-[2.5rem] border-solid shadow-lg flex flex-col gap-[3.19rem] ">
         <div className="flex sm:justify-center justify-start  transition-all items-center gap-2">
@@ -305,6 +307,7 @@ const Signup = () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

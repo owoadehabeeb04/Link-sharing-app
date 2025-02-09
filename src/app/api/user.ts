@@ -1,6 +1,6 @@
 import { userProps } from "@/dataTypes";
 import { db } from "@/utils/firebaseconfig";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+// import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 import {
   collection,
@@ -22,21 +22,21 @@ export async function createUser(userData: userProps) {
 }
 // upload profile image
 
-export const uploadImageFile = async (path: string, file: File) => {
-  const storage = getStorage();
-  const storageRef = ref(storage, path);
-  let url = "";
+// export const uploadImageFile = async (path: string, file: File) => {
+//   const storage = getStorage();
+//   const storageRef = ref(storage, path);
+//   let url = "";
 
-  try {
-    const snapshot = await uploadBytes(storageRef, file);
-    url = await getDownloadURL(snapshot.ref);
-  } catch (error) {
-    console.error("Upload error:", error);
-    throw error; // Re-throw the error after logging it
-  }
+//   try {
+//     const snapshot = await uploadBytes(storageRef, file);
+//     url = await getDownloadURL(snapshot.ref);
+//   } catch (error) {
+//     console.error("Upload error:", error);
+//     throw error; // Re-throw the error after logging it
+//   }
 
-  return url;
-};
+//   return url;
+// };
 
 // show user profile
 export const getShowUser = async () => {
@@ -48,7 +48,7 @@ export const getShowUser = async () => {
 
   querySnapshot.forEach((doc) => {
     const data = doc.data();
-
+    console.log({data})
     users.push({
       firstName: data.firstName || "",
       profileImage: data?.profileImage || "",
@@ -59,6 +59,7 @@ export const getShowUser = async () => {
       links: data.links || "",
     });
   });
+  console.log({showUser})
   return users;
 };
 

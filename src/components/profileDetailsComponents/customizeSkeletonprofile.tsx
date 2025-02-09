@@ -15,14 +15,14 @@ import { useStateContext } from "../context/stateContext";
 import {
   getShowUser,
   linksOfUsersAndFirstNameAndLastName,
-  uploadImageFile,
   UpdateImage,
-  updateFirstNameLastName,
+  updateFirstNameLastName
 } from "@/app/api/user";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Loader from "../loader";
+import { uploadToCloudinary } from "@/app/api/uploadImage";
 
 interface addLinkprops {
   name: string;
@@ -41,7 +41,7 @@ const CustomizeProfileDetails = () => {
     userDetails,
     setUserDetails,
     currentUserIdData,
-    setCurrentUserIdData,
+    setCurrentUserIdData
   } = useStateContext();
   const { linkAdd, setLinkAdd } = useStateContext();
 
@@ -85,11 +85,12 @@ const CustomizeProfileDetails = () => {
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
 
-  const handleFirstName = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setFirstNameValue(e.target.value);
-    setFirstNameError("");
+  const handleFirstName = (e: { target: { value: string } }) => {
+    const value = e.target.value.trim();
+    if (!value.includes(" ")) {
+      setFirstNameValue(value);
+      setFirstNameError("");
+    }
   };
   useEffect(() => {
     if (currentUserIdData?.firstName) {
@@ -98,11 +99,12 @@ const CustomizeProfileDetails = () => {
   }, [currentUserIdData?.firstName]);
 
   const [lastNameValue, setLastNameValue] = useState("");
-  const handleLastName = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setLastNameValue(e.target.value);
-    setLastNameError("");
+  const handleLastName = (e: { target: { value: string } }) => {
+    const value = e.target.value.trim();
+    if (!value.includes(" ")) {
+      setLastNameValue(value);
+      setLastNameError("");
+    }
   };
   useEffect(() => {
     if (currentUserIdData?.lastName) {
@@ -134,58 +136,46 @@ const CustomizeProfileDetails = () => {
   const [imageURL, setImageURL] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState(false);
   const types: string[] = ["image/png", "image/jpeg"];
+  const [imageIsLoading, setImageIsLoading] = useState(true);
+  const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    console.log(file);
-    if (file) {
-      // Check file type
-      const selectedFile = e.target.files && e.target.files[0];
-      if (selectedFile && types.includes(selectedFile.type)) {
-        // Check dimensions
-        const img = new window.Image();
-        img.src = URL.createObjectURL(file);
-        img.onload = async () => {
-          if (img.width > 1024 || img.height > 1024) {
-            toast.error("Image dimensions must be below 1024x1024px");
-            setImageFile(null);
-            setImageURL(null);
-            return;
-          }
-  
-          setImageFile(file);
-          setImageURL(URL.createObjectURL(file));
-  
-          try {
-            setImageLoading(true);
-            const userId = auth.currentUser?.uid;
-            const filePath = `profile-images/${file.name}`;
-  
-            // Wait for the image file to be uploaded
-            let url = await uploadImageFile(filePath, file);
-  
-            setImageURL(url);
-            await UpdateImage(userId, url);
-            setImageLoading(false);
-            if (url) {
-              setCurrentUserIdData((prevData: any) => ({
-                ...prevData,
-                profileImage: url,
-              }));
-            }
-            console.log({ url });
-            console.log({ currentUserIdData });
-          } catch (err) {
-            console.error(err);
-          }
-        };
-      } else {
-        toast.error("Please select a valid image type (jpg, png)");
-        setImageFile(null);
-        setImageURL(null);
-      }
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!allowedTypes.includes(file.type)) {
+      toast.error("Please select JPG or PNG files only");
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      toast.error("File size must be less than 10MB");
+      return;
+    }
+
+    try {
+      setImageLoading(true);
+      const userId = auth.currentUser?.uid;
+      if (!userId) throw new Error("Not authenticated");
+
+      const cloudinaryUrl = await uploadToCloudinary(file);
+      await UpdateImage(userId, cloudinaryUrl);
+
+      setImageURL(cloudinaryUrl);
+      setCurrentUserIdData((prev) => ({
+        ...prev,
+        profileImage: cloudinaryUrl
+      }));
+
+      toast.success("Image uploaded successfully");
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload image");
+    } finally {
+      setImageLoading(false);
     }
   };
-  
+
   useEffect(() => {
     console.log({ imageURL });
   }, [imageURL]);
@@ -220,7 +210,7 @@ const CustomizeProfileDetails = () => {
       setCurrentUserIdData((prevData: any) => ({
         ...prevData,
         firstName: firstNameValue,
-        lastName: lastNameValue,
+        lastName: lastNameValue
       }));
 
       toast.success("saved successfully");
@@ -250,18 +240,28 @@ const CustomizeProfileDetails = () => {
               />
               {/* profile image */}
               <div className="flex justify-center  absolute top-24 left-[-50%] right-[-50%] flex-col items-center gap-6">
-                {currentUserIdData.profileImage === "" ? (
-                  <div className="bg-[#EEE] border-solid border rounded-[50%] border-[#EEE] w-[6rem] h-[6rem] flex justify-center items-center"></div>
-                ) : (
-                  <div className="bg-[#EEE] border-solid  rounded-[50%] border-4 border-[#633CFF] w-[6rem] h-[6rem] flex justify-center items-center">
+                {currentUserIdData.profileImage ? (
+                  <div className="bg-[#EEE] border-solid rounded-[50%] border-4 border-[#633CFF] w-[6rem] h-[6rem] flex justify-center items-center overflow-hidden">
                     <Image
                       src={currentUserIdData.profileImage}
-                      className="rounded-[50%] object-cover"
+                      className={`rounded-[50%] w-full h-full object-cover transition-opacity duration-300 ${
+                        imageIsLoading ? "opacity-0" : "opacity-100"
+                      }`}
                       width={96}
                       height={96}
                       alt="profile image"
+                      loading="lazy"
+                      onLoadingComplete={() => setImageIsLoading(false)}
+                      onError={() => setImageIsLoading(false)}
                     />
+                    {imageIsLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#633CFF]" />
+                      </div>
+                    )}
                   </div>
+                ) : (
+                  <div className="bg-[#EEE] border-solid border rounded-[50%] border-[#EEE] w-[6rem] h-[6rem] flex justify-center items-center" />
                 )}
                 <div className="flex justify-center items-center flex-col">
                   {currentUserIdData &&
@@ -323,7 +323,7 @@ const CustomizeProfileDetails = () => {
                               linkAdd[index].name.toLowerCase() ===
                               "frontend mentor"
                                 ? "1px solid #D9D9D9"
-                                : "none",
+                                : "none"
                           }}
                         >
                           <div className="flex items-center gap-2">
@@ -389,35 +389,70 @@ const CustomizeProfileDetails = () => {
               </div>
               <div className="flex sm:flex-row flex-col  sm:items-center gap-[1.5rem]">
                 {currentUserIdData.profileImage === "" ? (
-                  <label className="flex justify-center max-[640px]:w-[70%]  p py-[3.8rem] sm:w-[100%] lg:w-[50%] items-center flex-col bg-[#EFEBFF] rounded-[0.75rem]">
-                    <Image src={addimage} alt="image" width={40} height={40} />
-                    <input type="file" hidden onChange={handleFileChange} />
-                    <p className="text-center cursor-pointer text-[#633CFF] text-base font-semibold leading-[150%]">
-                      + Upload Image
-                    </p>
-                  </label>
-                ) : (
-                  <div className="relative lg:w-[35%] max-[370px]:w-full max-[640px]:w-[70%]  items-center flex-col rounded-[0.75rem]">
-                    <Image
-                      src={currentUserIdData.profileImage}
-                      alt="profileimage"
-                      className="rounded-[0.875rem] w-full h-full object-cover"
-                      width={204}
-                      height={204}
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-[0.875rem]">
-                      <label className="text-center flex justify-center items-center flex-col cursor-pointer text-[#fff] text-[0.7rem] sm:text-base font-semibold leading-[150%]">
+                  <label className="flex justify-center max-[640px]:w-[70%] p py-[3.8rem] sm:w-[100%] lg:w-[50%] items-center flex-col bg-[#EFEBFF] rounded-[0.75rem]">
+                    {imageLoading ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#633CFF]"></div>
+                        <p className="text-[#633CFF] text-sm">Uploading...</p>
+                      </div>
+                    ) : (
+                      <>
                         <Image
-                          src={changeimage}
+                          src={addimage}
+                          alt="image"
                           width={40}
                           height={40}
-                          className=" w-1/2"
-                          alt="change image"
                         />
-                        <input type="file" hidden onChange={handleFileChange} />
-                        Change Image
-                      </label>
-                    </div>
+                        <input
+                          type="file"
+                          accept=".jpg .png"
+                          hidden
+                          onChange={handleFileChange}
+                        />
+                        <p className="text-center cursor-pointer text-[#633CFF] text-base font-semibold leading-[150%]">
+                          + Upload Image
+                        </p>
+                      </>
+                    )}
+                  </label>
+                ) : (
+                  <div className="relative lg:w-[35%] max-[370px]:w-full max-[640px]:w-[70%] items-center flex-col rounded-[0.75rem]">
+                    {imageLoading ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-[0.875rem]">
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                          <p className="text-white text-sm">Uploading...</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <Image
+                          src={currentUserIdData.profileImage}
+                          alt="profileimage"
+                          className="rounded-[0.875rem] w-full h-full object-cover"
+                          width={204}
+                          height={204}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-[0.875rem]">
+                          <label className="text-center flex justify-center items-center flex-col cursor-pointer text-[#fff] text-[0.7rem] sm:text-base font-semibold leading-[150%]">
+                            <Image
+                              src={changeimage}
+                              width={40}
+                              height={40}
+                              className="w-1/2"
+                              alt="change image"
+                            />
+                            <input
+                              type="file"
+                              accept="image/jpeg, image/jpg, image/png"
+                              hidden
+                              onChange={handleFileChange}
+                            />
+                            Change Image
+                          </label>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
 
@@ -442,6 +477,11 @@ const CustomizeProfileDetails = () => {
                   } "px-4  hover:shadow-purple-2xl ring:shadow-purple-2xl hover:border-[#633CFF] cursor-pointer focus:ring-input_focus focus:shadow-lg  outline-none focus:ring-1 focus:ring-[#633CFF] mt-[0.25rem]  py-3 text-opacity-50 placeholder:text-opacity-50 border border-solid w-full border-[#D9D9D9] rounded-[0.5rem] bg-[#fff] text-[#333] text-base leading-[150%] font-normal placeholder:text-[#333] placeholder:text-base placeholder:leading-[150%] placeholder:font-normal"
                   `}
                   value={firstNameValue}
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.preventDefault();
+                    }
+                  }}
                   onChange={handleFirstName}
                   placeholder="e.g. John"
                 />{" "}
@@ -465,6 +505,11 @@ const CustomizeProfileDetails = () => {
                 `}
                   value={lastNameValue}
                   onChange={handleLastName}
+                  onKeyDown={(e) => {
+                    if (e.key === " ") {
+                      e.preventDefault();
+                    }
+                  }}
                   placeholder="e.g. Appleesed"
                 />{" "}
                 {lastNameError && (
