@@ -48,7 +48,6 @@ export const getShowUser = async () => {
 
   querySnapshot.forEach((doc) => {
     const data = doc.data();
-    console.log({data})
     users.push({
       firstName: data.firstName || "",
       profileImage: data?.profileImage || "",
@@ -59,7 +58,6 @@ export const getShowUser = async () => {
       links: data.links || "",
     });
   });
-  console.log({showUser})
   return users;
 };
 
@@ -86,7 +84,6 @@ export const linksOfUsersAndFirstNameAndLastName = async (
 export const UpdateImage = async (userId: any, newProfileImage?: string) => {
   try {
     const userItemRef = doc(db, "Users", userId);
-    console.log("clicking o,", userId);
     await setDoc(
       userItemRef,
       {
@@ -94,9 +91,7 @@ export const UpdateImage = async (userId: any, newProfileImage?: string) => {
       },
       { merge: true }
     );
-    console.log("successfully");
 
-    console.log("updated item:", userId);
   } catch (error) {
     console.error("Error updating in firebase:", error);
     throw error;
@@ -109,7 +104,6 @@ export const updateFirstNameLastName = async (
 ) => {
   try {
     const userItemRef = doc(db, "Users", userId);
-    console.log("clicking o,", userId);
     await setDoc(
       userItemRef,
       {
@@ -118,9 +112,7 @@ export const updateFirstNameLastName = async (
       },
       { merge: true }
     );
-    console.log("successfully");
 
-    console.log("updated item:", userId);
   } catch (error) {
     console.error("Error updating in firebase:", error);
     throw error;

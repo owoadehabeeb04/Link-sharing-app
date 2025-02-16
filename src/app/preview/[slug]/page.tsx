@@ -24,7 +24,6 @@ type PreviewPageProps = {
 const PreviewPage = ({ params }: PreviewPageProps) => {
   const router = useRouter();
   const { slug }: { slug: string | undefined } = params;
-  console.log({ slug });
   const userId = auth.currentUser?.uid;
 
   const {
@@ -43,7 +42,6 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
       if (user) {
       } else {
         setUserBoolean(true);
-        console.log("logged out");
       }
     });
 
@@ -109,7 +107,6 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
         "sorry, you cant edit this lnk cos you are not the owner of the account"
       );
   };
-  console.log({ currentUserIdData });
   return (
     <section className="relative min-h-[100dvh] mobile:bg-white">
       {isLoading ? (

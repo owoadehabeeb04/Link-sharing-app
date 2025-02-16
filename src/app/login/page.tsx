@@ -51,10 +51,8 @@ const Login = () => {
 
   const submitLogin = async () => {
     if (!validateForm()) {
-      console.log('not valid')
       return;
     }
-    console.log("clicked");
     setLoading(true);
     try {
       const userCredentials = await signInWithEmailAndPassword(
@@ -64,7 +62,6 @@ const Login = () => {
       );
       const user = userCredentials.user;
       const userId = auth?.currentUser?.uid;
-      console.log(user);
       if (user) {
         // alert("success");
         setEmail("");

@@ -42,9 +42,7 @@ const Navbar = () => {
     },
   ];
   const signOut = async (e: any) => {
-    console.log("Sign out button clicked");
     try {
-      console.log(" signingout");
       await auth.signOut();
       router.push("/login");
       toast.success("sign out succesfully");

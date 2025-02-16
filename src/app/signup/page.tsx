@@ -88,7 +88,6 @@ const Signup = () => {
 
       const mail = auth?.currentUser?.email;
       const userEmail = mail ?? "";
-      console.log(userEmail);
 
       // Check if userId is defined
       if (!userId) {
@@ -113,15 +112,12 @@ const Signup = () => {
         ],
       });
 
-      console.log("User ID:", userId);
       router.push("addLink/" + userId);
       setActivePage("Links");
 
       try {
         let users = await getShowUser();
-        console.log({ users });
         setUserDetails(users);
-        console.log({ userDetails });
         // console.log(userDetails);
       } catch (error) {
         console.error("Error fetching user data:", error);

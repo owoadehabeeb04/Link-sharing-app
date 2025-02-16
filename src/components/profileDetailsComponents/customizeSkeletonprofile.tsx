@@ -44,25 +44,20 @@ const CustomizeProfileDetails = () => {
     setCurrentUserIdData
   } = useStateContext();
   const { linkAdd, setLinkAdd } = useStateContext();
-console.log({linkAdd})
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         const users = await getShowUser();
-        console.log({ users });
         setUserDetails(users);
 
         const userId = auth.currentUser?.uid;
-        console.log(userId);
         const currentUserData: any = users.find(
           (user: userProps) => user.userId === userId
         );
-        console.log(currentUserData);
         if (currentUserData) {
           setCurrentUserIdData(currentUserData);
-          console.log(currentUserData?.links);
           if (currentUserData?.links[0].name !== "") {
             setLinkAdd(currentUserData?.links);
           }
@@ -71,7 +66,6 @@ console.log({linkAdd})
           // router.push("/signup");
           // toast.error("You need to sign in first to use this web app");
         }
-        console.log({ currentUserIdData });
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -79,7 +73,6 @@ console.log({linkAdd})
 
     fetchData();
   }, []);
-  console.log({ userDetails });
 
   const [firstNameValue, setFirstNameValue] = useState("");
   const [firstNameError, setFirstNameError] = useState("");
@@ -176,9 +169,7 @@ console.log({linkAdd})
     }
   };
 
-  useEffect(() => {
-    console.log({ imageURL });
-  }, [imageURL]);
+  
   const [saveLoading, setSaveLoading] = useState(false);
   const handleSave = async (index: number) => {
     setSaveLoading(true);

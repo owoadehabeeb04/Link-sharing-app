@@ -44,7 +44,6 @@ const CustomizeLinkSkeleton = () => {
   const { linkAdd, setLinkAdd } = useStateContext();
 
   const [isLoading, setIsLoading] = useState(true);
-  console.log({ linkAdd });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -53,11 +52,9 @@ const CustomizeLinkSkeleton = () => {
         setUserDetails(users);
 
         const userId = auth.currentUser?.uid;
-        console.log(userId);
         const currentUserData: any = users.find(
           (user: userProps) => user.userId === userId
         );
-        console.log(currentUserData);
 
         if (currentUserData) {
           setCurrentUserIdData(currentUserData);
@@ -69,7 +66,6 @@ const CustomizeLinkSkeleton = () => {
           // router.push("/signup");
           // toast.error("You need to sign in first to use this web app");
         }
-        console.log({ currentUserIdData });
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -77,12 +73,10 @@ const CustomizeLinkSkeleton = () => {
 
     fetchData();
   }, []);
-  console.log({ userDetails });
 
   const CurrentUser = (userDetails: userProps[], currentID: any) => {
     return userDetails.filter((user: userProps) => user.userId === currentID);
   };
-  console.log(userDetails);
   const [openDropDown, setOpenDropDown] =
     useState<openDropDownState[]>(initialState);
   const getBooleanValue = (index: number, booleanIndex: number) => {
@@ -218,14 +212,12 @@ const CustomizeLinkSkeleton = () => {
     linkAdd.filter((linkItem) =>
       websites.some((website) => website.link.includes(linkItem.link))
     );
-  console.log({ matchedLinks });
   const validateLinks = () => {
     const newErrors = linkAdd.map((linkItem) => {
       // Check if link is empty
       if (!linkItem.link.trim()) {
         return "Link cannot be empty";
       }
-      console.log({linkItem})
 
       // Check if it's a custom platform (Other)
       const isCustomPlatform = !websites.some(website => website.name === linkItem.name);
@@ -241,7 +233,6 @@ const CustomizeLinkSkeleton = () => {
       } else {
         // For predefined platforms, check if link matches the platform's format
 const platform = websites.find((web) => web.name === linkItem.name);
-        console.log({platform})
         if (!platform) {
           return "Please select a platform";
         }
@@ -268,9 +259,7 @@ const platform = websites.find((web) => web.name === linkItem.name);
     }
 
     const validationErrors = validateLinks();
-    console.log({ validationErrors });
     const hasErrors = validationErrors.some((error) => error != null && error !== undefined);
-    console.log({ hasErrors });
     if (!hasErrors) {
       try {
         const userId = auth.currentUser?.uid;
@@ -307,9 +296,7 @@ const platform = websites.find((web) => web.name === linkItem.name);
     }
   }, [linkAdd.length]);
 
-  useEffect(() => {
-    console.log({ errors });
-  }, [errors]);
+  
   return (
     <>
       {isLoading ? (
@@ -600,7 +587,7 @@ const platform = websites.find((web) => web.name === linkItem.name);
                                       e.target.value
                                     )
                                   }
-                                  className="mt-1 w-full  hover:shadow-purple-2xl ring:shadow-purple-2xl hover:border-[#633CFF] cursor-pointer focus:ring-input_focus focus:shadow-lg  outline-none focus:ring-1 focus:ring-[#633CFF] mt-[0.25rem] pr-4 py-3 text-opacity-50 placeholder:text-opacity-50 border border-solid w-full border-[#D9D9D9] rounded-[0.5rem] bg-[#fff] text-[#333] text-base leading-[150%] font-normal placeholder:text-[#333] placeholder:text-base placeholder:leading-[150%] placeholder:font-normal pl-9 hover:shadow-purple-2xl ring:shadow-purple-2xl hover:border-[#633CFF] cursor-pointer focus:ring-input_focus focus:shadow-lg outline-none focus:ring-1 focus:ring-[#633CFF] p-3 border border-[#D9D9D9] rounded-[0.5rem] bg-[#fff] text-[#333] text-base leading-[150%] font-normal"
+                                  className=" ring:shadow-purple-2xl  focus:ring-input_focus   mt-[0.25rem] pr-4 py-3 text-opacity-50 placeholder:text-opacity-50  border-solid w-full    placeholder:text-[#333] placeholder:text-base placeholder:leading-[150%] placeholder:font-normal pl-9 hover:shadow-purple-2xl ring:shadow-purple-2xl hover:border-[#633CFF] cursor-pointer focus:ring-input_focus focus:shadow-lg outline-none focus:ring-1 focus:ring-[#633CFF] p-3 border border-[#D9D9D9] rounded-[0.5rem] bg-[#fff] text-[#333] text-base leading-[150%] font-normal"
                                   placeholder="Enter platform name"
                                 />
                                 <MoreHorizontal className="absolute top-5 left-4 w-4 h-4 text-[#737373]" />
