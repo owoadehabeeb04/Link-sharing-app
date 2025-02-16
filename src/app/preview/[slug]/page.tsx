@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useStateContext } from "@/components/context/stateContext";
 import { getShowUser } from "@/app/api/user";
 import { auth } from "@/utils/firebaseconfig";
-import { userProps, websites } from "@/dataTypes";
+import { getCustomBackgroundColor, userProps, websites } from "@/dataTypes";
 import { useRouter } from "next/navigation";
 import React from "react";
 import Link from "next/link";
@@ -184,7 +184,7 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
                               (web) =>
                                 web.name.toLowerCase() ===
                                 linkAdd[index].name.toLowerCase()
-                            )?.backgroundColor || "#633CFF",
+                              )?.backgroundColor || getCustomBackgroundColor(index),
                           color:
                             linkAdd[index].name.toLowerCase() ===
                             "frontend mentor"

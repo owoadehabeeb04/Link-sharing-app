@@ -4,7 +4,7 @@ import Image from "next/image";
 import customize from "../../../public/customize.svg";
 import innerCustomize from "../../../public/customize2.svg";
 import { auth } from "@/utils/firebaseconfig";
-import { userProps, websites } from "@/dataTypes";
+import { getCustomBackgroundColor, userProps, websites } from "@/dataTypes";
 
 import linkimage from "../../../public/link.svg";
 import arrow from "../../../public/arrow.svg";
@@ -300,7 +300,7 @@ const CustomizeProfileDetails = () => {
                                 (web) =>
                                   web.name.toLowerCase() ===
                                   linkAdd[index].name.toLowerCase()
-                              )?.backgroundColor || "#633CFF",
+                              )?.backgroundColor || getCustomBackgroundColor(index),
                             color:
                               linkAdd[index].name.toLowerCase() ===
                               "frontend mentor"

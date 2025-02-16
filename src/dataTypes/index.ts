@@ -163,3 +163,15 @@ export const websites = [
     isCustom: true
   },
 ];
+
+export const getCustomBackgroundColor = (index: number) => {
+  // Predefined gradient colors for custom links
+  const colors = [
+    '#633CFF', // Purple
+    '#FF3C8C', // Pink
+    '#3CBAFF', // Blue
+    '#40C463', // Green
+    '#FD9426'  // Orange
+  ];
+  return colors[index % colors.length];
+};

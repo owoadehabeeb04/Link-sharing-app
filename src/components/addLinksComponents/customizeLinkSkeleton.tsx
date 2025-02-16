@@ -5,7 +5,7 @@ import customize from "../../../public/customize.svg";
 import innerCustomize from "../../../public/customize2.svg";
 import EmptyLink from "./emptyLink";
 import { auth } from "@/utils/firebaseconfig";
-import { userProps, websites } from "@/dataTypes";
+import { getCustomBackgroundColor, userProps, websites } from "@/dataTypes";
 
 import linkimage from "../../../public/link.svg";
 import arrow from "../../../public/arrow.svg";
@@ -175,7 +175,7 @@ const CustomizeLinkSkeleton = () => {
       updatedLinkAdd[index] = {
         ...updatedLinkAdd[index],
         name: value,
-        backgroundColor: "#633CFF",
+        backgroundColor: getCustomBackgroundColor(index),
         textColor: "#FFFFFF"
       };
       setLinkAdd(updatedLinkAdd);
@@ -296,7 +296,7 @@ const platform = websites.find((web) => web.name === linkItem.name);
     }
   }, [linkAdd.length]);
 
-  
+  console.log({linkAdd})
   return (
     <>
       {isLoading ? (
@@ -378,7 +378,7 @@ const platform = websites.find((web) => web.name === linkItem.name);
                                 (web) =>
                                   web.name.toLowerCase() ===
                                   linkAdd[index].name.toLowerCase()
-                              )?.backgroundColor || "#633CFF",
+                              )?.backgroundColor || getCustomBackgroundColor(index),
                             color:
                               linkAdd[index].name.toLowerCase() ===
                               "frontend mentor"
