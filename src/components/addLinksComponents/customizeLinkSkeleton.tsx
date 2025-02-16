@@ -224,7 +224,7 @@ const CustomizeLinkSkeleton = () => {
       if (isCustomPlatform) {
         // For custom platforms, just verify it's a valid URL with http/https and has a domain extension
         const urlPattern =
-          /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6})(\/[\w.-]*)*\/?$/i;
+         /^(http|https):\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/[a-zA-Z0-9-._~:?#@!$&'()*+,;=]*)*$/;
         if (!urlPattern.test(linkItem.link)) {
           return "Please enter a valid URL starting with http:// or https:// and include a domain extension";
         }
