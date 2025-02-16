@@ -19,6 +19,7 @@ name: string;
 link: string;
 image?: string;
 backgroundColor?: string;
+textColor?: string;
 }
 interface ContextProps {
   currentUserIdData: any;

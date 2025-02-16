@@ -14,6 +14,7 @@ import link from "../../../../public/link.svg";
 import Loader from "@/components/loader";
 import toast from "react-hot-toast";
 import { onAuthStateChanged } from "firebase/auth";
+import { Link2 } from "lucide-react";
 type PreviewPageProps = {
   params: {
     slug: string;
@@ -30,7 +31,7 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
     userDetails,
     setUserDetails,
     currentUserIdData,
-    setCurrentUserIdData,
+    setCurrentUserIdData
   } = useStateContext();
   const { linkAdd, setLinkAdd } = useStateContext();
   const [isLoading, setIsLoading] = useState(true);
@@ -41,8 +42,8 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
       } else {
-        setUserBoolean(true)
-        console.log("logged out")
+        setUserBoolean(true);
+        console.log("logged out");
       }
     });
 
@@ -56,10 +57,11 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
 
         const currentUserData: any = users.find((user: userProps) => {
           // Create slug from name or email
-          const userSlug = user.firstName && user.lastName ? 
-            `${user.firstName.toLowerCase()}-${user.lastName.toLowerCase()}` :
-            user.email.split('@')[0].toLowerCase();
-          
+          const userSlug =
+            user.firstName && user.lastName
+              ? `${user.firstName.toLowerCase()}-${user.lastName.toLowerCase()}`
+              : user.email.split("@")[0].toLowerCase();
+
           return userSlug === slug;
         });
 
@@ -74,7 +76,6 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
           setUserBoolean(!isOwner);
         }
         setIsLoading(false);
-
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -84,13 +85,18 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
   }, [slug]);
   function handleClipboardCopy() {
     // Create share URL with slug
-    const shareUrl = currentUserIdData?.firstName && currentUserIdData?.lastName ? 
-      `${window.location.origin}/preview/${currentUserIdData.firstName.toLowerCase()}-${currentUserIdData.lastName.toLowerCase()}` :
-      `${window.location.origin}/preview/${currentUserIdData.email.split('@')[0].toLowerCase()}`;
-  
+    const shareUrl =
+      currentUserIdData?.firstName && currentUserIdData?.lastName
+        ? `${
+            window.location.origin
+          }/preview/${currentUserIdData.firstName.toLowerCase()}-${currentUserIdData.lastName.toLowerCase()}`
+        : `${window.location.origin}/preview/${currentUserIdData.email
+            .split("@")[0]
+            .toLowerCase()}`;
+
     navigator.clipboard.writeText(shareUrl);
     setIsCopied(true);
-  
+
     setTimeout(() => {
       setIsCopied(false);
     }, 3000);
@@ -98,7 +104,10 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
   const linkToAddlink = () => {
     if (userBoolean === false) {
       router.push(`/addLink/${userId}`);
-    } else toast.error("sorry, you cant edit this lnk cos you are not the owner of the account");
+    } else
+      toast.error(
+        "sorry, you cant edit this lnk cos you are not the owner of the account"
+      );
   };
   console.log({ currentUserIdData });
   return (
@@ -109,7 +118,7 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
         <div>
           <div className="sm:h-[25rem] relative rounded-[0_0_3.2rem_3.2rem] sm:bg-[#633cff] hidd sm:flex"></div>
 
-        {  !userBoolean && ( // Only show if user is owner
+          {!userBoolean && ( // Only show if user is owner
             <header className="sm:flex hidden absolute top-[2.4rem] left-[-0.1%] mx-[2.4rem]  w-[100%] items-center justify-between rounded-[1.2rem] bg-white px-[1rem] py-[1rem] mobile:static sm:mx-0">
               <div
                 onClick={linkToAddlink}
@@ -178,7 +187,7 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
                               (web) =>
                                 web.name.toLowerCase() ===
                                 linkAdd[index].name.toLowerCase()
-                            )?.backgroundColor || "#EEE",
+                            )?.backgroundColor || "#633CFF",
                           color:
                             linkAdd[index].name.toLowerCase() ===
                             "frontend mentor"
@@ -187,12 +196,12 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
                                   (web) =>
                                     web.name.toLowerCase() ===
                                     linkAdd[index].name.toLowerCase()
-                                )?.textColor || "#000",
+                                )?.textColor || "#fff",
                           border:
                             linkAdd[index].name.toLowerCase() ===
                             "frontend mentor"
                               ? "1px solid #D9D9D9"
-                              : "none",
+                              : "none"
                         }}
                       >
                         <div className="flex items-center gap-2">
@@ -200,7 +209,7 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
                             (web) =>
                               web.name.toLowerCase() ===
                               linkAdd[index].name.toLowerCase()
-                          )?.image && (
+                          )?.image ? (
                             <Image
                               className=""
                               src={
@@ -214,8 +223,10 @@ const PreviewPage = ({ params }: PreviewPageProps) => {
                               height={16}
                               width={16}
                             />
+                          ) : (
+                            <Link2 size={16} color="white" />
                           )}
-                          <h1 className="text-[1rem] font-normal leading-[150%]">
+                          <h1 className="text-[0.75rem] font-normal leading-[150%]">
                             {linkAdd[index]?.name}
                           </h1>
                         </div>

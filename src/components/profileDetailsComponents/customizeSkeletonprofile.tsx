@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Loader from "../loader";
 import { uploadToCloudinary } from "@/app/api/uploadImage";
-
+import { Link2 } from "lucide-react"; 
 interface addLinkprops {
   name: string;
   link: string;
@@ -44,7 +44,7 @@ const CustomizeProfileDetails = () => {
     setCurrentUserIdData
   } = useStateContext();
   const { linkAdd, setLinkAdd } = useStateContext();
-
+console.log({linkAdd})
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
@@ -309,7 +309,7 @@ const CustomizeProfileDetails = () => {
                                 (web) =>
                                   web.name.toLowerCase() ===
                                   linkAdd[index].name.toLowerCase()
-                              )?.backgroundColor || "#EEE",
+                              )?.backgroundColor || "#633CFF",
                             color:
                               linkAdd[index].name.toLowerCase() ===
                               "frontend mentor"
@@ -318,7 +318,7 @@ const CustomizeProfileDetails = () => {
                                     (web) =>
                                       web.name.toLowerCase() ===
                                       linkAdd[index].name.toLowerCase()
-                                  )?.textColor || "#000",
+                                  )?.textColor || "#fff",
                             border:
                               linkAdd[index].name.toLowerCase() ===
                               "frontend mentor"
@@ -326,30 +326,30 @@ const CustomizeProfileDetails = () => {
                                 : "none"
                           }}
                         >
-                          <div className="flex items-center gap-2">
-                            {websites.find(
-                              (web) =>
-                                web.name.toLowerCase() ===
-                                linkAdd[index].name.toLowerCase()
-                            )?.image && (
-                              <Image
-                                className=""
-                                src={
-                                  websites.find(
-                                    (web) =>
-                                      web.name.toLowerCase() ===
-                                      linkAdd[index].name.toLowerCase()
-                                  )?.previewImage
-                                }
-                                alt={linkAdd[index]?.name}
-                                height={16}
-                                width={16}
-                              />
-                            )}
-                            <h1 className="text-[0.75rem] font-normal leading-[150%]">
-                              {linkAdd[index]?.name}
-                            </h1>
-                          </div>
+<div className="flex items-center gap-2">
+  {websites.find(
+    (web) =>
+      web.name.toLowerCase() === linkAdd[index].name.toLowerCase()
+  )?.image ? (
+    <Image
+      className=""
+      src={
+        websites.find(
+          (web) =>
+            web.name.toLowerCase() === linkAdd[index].name.toLowerCase()
+        )?.previewImage
+      }
+      alt={linkAdd[index]?.name}
+      height={16}
+      width={16}
+    />
+  ) : (
+    <Link2 size={16} color="white" />
+  )}
+  <h1 className="text-[0.75rem] font-normal leading-[150%]">
+    {linkAdd[index]?.name}
+  </h1>
+</div>
                           <Image
                             className=""
                             src={

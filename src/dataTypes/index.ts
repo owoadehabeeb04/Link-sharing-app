@@ -24,6 +24,7 @@ import freecodecamppreview from "../../public/freecodecamppreview.svg";
 import gitlabpreview from "../../public/gitlabpreview.svg";
 import hashnodepreview from "../../public/hashnodepreview.svg";
 import stackoverflowpreview from "../../public/stackoverflowpreview.svg";
+import { MoreHorizontal } from 'lucide-react'; 
 
 export type userProps = {
   profileImage: string;
@@ -151,5 +152,14 @@ export const websites = [
     image: stackoverflow,
     textColor: "#FFF",
     previewImage: stackoverflowpreview,
+  },
+  {
+    name: "Other",
+    link: "",
+    backgroundColor: "#633CFF", 
+    image: null,
+    textColor: "#FFFFFF",
+    previewImage: null,
+    isCustom: true
   },
 ];

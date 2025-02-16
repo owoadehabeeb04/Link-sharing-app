@@ -13,12 +13,13 @@ import arrowFrontendMentor from "../../../public/arrowFrontendmentor.svg";
 import { useStateContext } from "../context/stateContext";
 import {
   getShowUser,
-  linksOfUsersAndFirstNameAndLastName,
+  linksOfUsersAndFirstNameAndLastName
 } from "@/app/api/user";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Loader from "../loader";
+import { MoreHorizontal, Link2 } from "lucide-react";
 
 type openDropDownState = {
   boolean1: boolean;
@@ -28,6 +29,7 @@ interface addLinkprops {
   link: string;
   image?: string;
   backgroundColor?: string;
+  textColor?: string;
 }
 const initialState: openDropDownState[] = [{ boolean1: false }];
 const CustomizeLinkSkeleton = () => {
@@ -37,10 +39,12 @@ const CustomizeLinkSkeleton = () => {
     userDetails,
     setUserDetails,
     currentUserIdData,
-    setCurrentUserIdData,
+    setCurrentUserIdData
   } = useStateContext();
   const { linkAdd, setLinkAdd } = useStateContext();
+
   const [isLoading, setIsLoading] = useState(true);
+  console.log({ linkAdd });
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -107,7 +111,7 @@ const CustomizeLinkSkeleton = () => {
 
       newDropDown[index] = {
         ...newDropDown[index],
-        [key]: !newDropDown[index][key],
+        [key]: !newDropDown[index][key]
       };
       return newDropDown;
     });
@@ -117,30 +121,71 @@ const CustomizeLinkSkeleton = () => {
     );
   };
 
+  // Add state for custom platform
+  const [customPlatform, setCustomPlatform] = useState<{
+    [key: number]: { name: string; link: string };
+  }>({});
+
+  // Update handleWebsiteSelect
   const handleWebsiteSelect = (
     index: number,
-    website: { link: string; image?: string; name: string }
+    website: { link: string; image?: any; name: string; isCustom?: boolean }
   ) => {
+    if (website.isCustom) {
+      setCustomPlatform({
+        ...customPlatform,
+        [index]: { name: "", link: "" }
+      });
+    } else {
+      // Clear custom platform when selecting regular link
+      const newCustomPlatform = { ...customPlatform };
+      delete newCustomPlatform[index];
+      setCustomPlatform(newCustomPlatform);
+    }
+
     const updatedLinkAdd = [...linkAdd];
     updatedLinkAdd[index] = {
       ...updatedLinkAdd[index],
       link: website.link,
       name: website.name,
-      image: website.image,
+      image: typeof website.image === "string" ? website.image : ""
     };
     setLinkAdd(updatedLinkAdd);
-    // Close the dropdown after selecting an item
+
+    // Close dropdown
     const key = `boolean${index + 1}`;
     setOpenDropDown((prevOpenDown) => {
       const newDropDown = [...prevOpenDown];
-      newDropDown[index] = {
-        ...newDropDown[index],
-        [key]: false,
-      };
+      newDropDown[index] = { boolean1: false };
       return newDropDown;
     });
+    setErrors([]);
+  };
 
-    console.log(openDropDown[index]), setErrors([]);
+  // Add custom platform input handlers
+  const handleCustomPlatformChange = (
+    index: number,
+    field: "name" | "link",
+    value: string
+  ) => {
+    setCustomPlatform({
+      ...customPlatform,
+      [index]: {
+        ...customPlatform[index],
+        [field]: value
+      }
+    });
+
+    if (field === "name") {
+      const updatedLinkAdd = [...linkAdd];
+      updatedLinkAdd[index] = {
+        ...updatedLinkAdd[index],
+        name: value,
+        backgroundColor: "#633CFF",
+        textColor: "#FFFFFF"
+      };
+      setLinkAdd(updatedLinkAdd);
+    }
   };
 
   const addLink = () => {
@@ -148,11 +193,11 @@ const CustomizeLinkSkeleton = () => {
       ...linkAdd,
       {
         name: "Github",
-        link: "https://www.github.com/",
-      },
+        link: "https://www.github.com/"
+      }
     ]);
     openDropDown.push({
-      boolean1: false,
+      boolean1: false
     });
   };
   const removeLink = async (index: number) => {
@@ -176,23 +221,43 @@ const CustomizeLinkSkeleton = () => {
   console.log({ matchedLinks });
   const validateLinks = () => {
     const newErrors = linkAdd.map((linkItem) => {
+      // Check if link is empty
       if (!linkItem.link.trim()) {
         return "Link cannot be empty";
       }
-  
-      const website = websites.find((website) =>
-        linkItem.link.toLowerCase().startsWith(website.link.toLowerCase())
-      );
-  
-      if (!website) {
-        return "Link not valid";
-      }
-  
-      return null;
+      console.log({linkItem})
+
+      // Check if it's a custom platform (Other)
+      const isCustomPlatform = !websites.some(website => website.name === linkItem.name);
+      if (isCustomPlatform) {
+        // For custom platforms, just verify it's a valid URL with http/https and has a domain extension
+        const urlPattern =
+          /^(https?:\/\/)?([\w.-]+)\.([a-z]{2,6})(\/[\w.-]*)*\/?$/i;
+        if (!urlPattern.test(linkItem.link)) {
+          return "Please enter a valid URL starting with http:// or https:// and include a domain extension";
+        }
+
+        return null;
+      } else {
+        // For predefined platforms, check if link matches the platform's format
+const platform = websites.find((web) => web.name === linkItem.name);
+        console.log({platform})
+        if (!platform) {
+          return "Please select a platform";
+        }
+
+        // Check if the entered link starts with the platform's base URL
+        if (
+          !linkItem.link.toLowerCase().startsWith(platform.link.toLowerCase())
+        ) {
+          return `Please use the format: ${platform.link}username`;
+        }
+        return null;}
+      
     });
-    
+
     setErrors(newErrors);
-    return newErrors; // Return errors array
+    return newErrors;
   };
   const [saveLoading, setSaveLoading] = useState(false);
   const handleSave = async (index: number) => {
@@ -201,10 +266,11 @@ const CustomizeLinkSkeleton = () => {
       toast.error("kindly pick a link");
       return;
     }
-  
+
     const validationErrors = validateLinks();
-    const hasErrors = validationErrors.some(error => error !== null);
-  
+    console.log({ validationErrors });
+    const hasErrors = validationErrors.some((error) => error != null && error !== undefined);
+    console.log({ hasErrors });
     if (!hasErrors) {
       try {
         const userId = auth.currentUser?.uid;
@@ -212,14 +278,14 @@ const CustomizeLinkSkeleton = () => {
           toast.error("User not authenticated");
           return;
         }
-  
+
         let newUserIdData = { ...currentUserIdData };
         newUserIdData.Links = linkAdd;
-  
+
         await linksOfUsersAndFirstNameAndLastName(userId, newUserIdData.Links);
         setLinkAdd(newUserIdData.Links);
         toast.success("saved links successfully");
-        setSaveLoading(false)
+        setSaveLoading(false);
       } catch (error) {
         console.error("Error saving links:", error);
         toast.error("Failed to save links");
@@ -241,6 +307,9 @@ const CustomizeLinkSkeleton = () => {
     }
   }, [linkAdd.length]);
 
+  useEffect(() => {
+    console.log({ errors });
+  }, [errors]);
   return (
     <>
       {isLoading ? (
@@ -266,16 +335,15 @@ const CustomizeLinkSkeleton = () => {
                   <div className="bg-[#EEE] border-solid border rounded-[50%] border-[#EEE] w-[6rem] h-[6rem] flex justify-center items-center"></div>
                 ) : (
                   <div className="bg-[#EEE] border-solid  rounded-[50%] border-4 border-[#633CFF] w-[6rem] h-[6rem] flex justify-center items-center">
-                                 <Image
-                                   src={currentUserIdData.profileImage}
-                                   className={`rounded-[50%] w-full h-full object-cover transition-opacity duration-300 
+                    <Image
+                      src={currentUserIdData.profileImage}
+                      className={`rounded-[50%] w-full h-full object-cover transition-opacity duration-300 
                                    `}
-                                   width={96}
-                                   height={96}
-                                   alt="profile image"
-                                   loading="lazy"
-                                   
-                                 />
+                      width={96}
+                      height={96}
+                      alt="profile image"
+                      loading="lazy"
+                    />
                   </div>
                 )}
                 <div className="flex justify-center items-center flex-col">
@@ -323,7 +391,7 @@ const CustomizeLinkSkeleton = () => {
                                 (web) =>
                                   web.name.toLowerCase() ===
                                   linkAdd[index].name.toLowerCase()
-                              )?.backgroundColor || "#EEE",
+                              )?.backgroundColor || "#633CFF",
                             color:
                               linkAdd[index].name.toLowerCase() ===
                               "frontend mentor"
@@ -332,38 +400,38 @@ const CustomizeLinkSkeleton = () => {
                                     (web) =>
                                       web.name.toLowerCase() ===
                                       linkAdd[index].name.toLowerCase()
-                                  )?.textColor || "#000",
+                                  )?.textColor || "#fff",
                             border:
                               linkAdd[index].name.toLowerCase() ===
                               "frontend mentor"
                                 ? "1px solid #D9D9D9"
-                                : "none",
+                                : "none"
                           }}
                         >
-                          <div className="flex items-center gap-2">
-                            {websites.find(
-                              (web) =>
-                                web.name.toLowerCase() ===
-                                linkAdd[index].name.toLowerCase()
-                            )?.image && (
-                              <Image
-                                className=""
-                                src={
-                                  websites.find(
-                                    (web) =>
-                                      web.name.toLowerCase() ===
-                                      linkAdd[index].name.toLowerCase()
-                                  )?.previewImage
-                                }
-                                alt={linkAdd[index]?.name}
-                                height={16}
-                                width={16}
-                              />
-                            )}
-                            <h1 className="text-[0.75rem] font-normal leading-[150%]">
-                              {linkAdd[index]?.name}
-                            </h1>
-                          </div>
+                  <div className="flex items-center gap-2">
+  {websites.find(
+    (web) =>
+      web.name.toLowerCase() === linkAdd[index].name.toLowerCase()
+  )?.image ? (
+    <Image
+      className=""
+      src={
+        websites.find(
+          (web) =>
+            web.name.toLowerCase() === linkAdd[index].name.toLowerCase()
+        )?.previewImage
+      }
+      alt={linkAdd[index]?.name}
+      height={16}
+      width={16}
+    />
+  ) : (
+    <Link2 size={16} color="white" />
+  )}
+  <h1 className="text-[0.75rem] font-normal leading-[150%]">
+    {linkAdd[index]?.name}
+  </h1>
+</div>
                           <Image
                             className=""
                             src={
@@ -493,14 +561,20 @@ const CustomizeLinkSkeleton = () => {
                                     }
                                     className="flex gap-[0.75rem] text-[#333] transition-[2s] hover:text-[#633CFF] py-[0.75rem] mx-4 border-b border-solid border-[#D9D9D9]"
                                   >
-                                    <Image
-                                      src={website?.image}
-                                      alt={website?.name}
-                                      width={16}
-                                      height={16}
-                                    />
+                                    {website.isCustom ? (
+                                      <MoreHorizontal className="w-4 h-4" />
+                                    ) : website.image ? (
+                                      <Image
+                                        src={website.image}
+                                        alt={website.name}
+                                        width={16}
+                                        height={16}
+                                      />
+                                    ) : (
+                                      <MoreHorizontal className="w-4 h-4" />
+                                    )}
                                     <h1 className="text-base font-normal leading-[150%]">
-                                      {website?.name}
+                                      {website.name}
                                     </h1>
                                   </div>
                                 ))}
@@ -509,29 +583,46 @@ const CustomizeLinkSkeleton = () => {
                           </div>
                         </div>
                         <div className="w-full mt-[0.75rem]">
+                          {/* custom link name */}
+                          {customPlatform[i] && (
+                            <div className="mb-4">
+                              <label className="text-[#333] text-[0.75rem] font-normal leading-[150%]">
+                                Platform Name
+                              </label>
+                              <div className="relative">
+                                <input
+                                  type="text"
+                                  value={customPlatform[i].name}
+                                  onChange={(e) =>
+                                    handleCustomPlatformChange(
+                                      i,
+                                      "name",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="mt-1 w-full  hover:shadow-purple-2xl ring:shadow-purple-2xl hover:border-[#633CFF] cursor-pointer focus:ring-input_focus focus:shadow-lg  outline-none focus:ring-1 focus:ring-[#633CFF] mt-[0.25rem] pr-4 py-3 text-opacity-50 placeholder:text-opacity-50 border border-solid w-full border-[#D9D9D9] rounded-[0.5rem] bg-[#fff] text-[#333] text-base leading-[150%] font-normal placeholder:text-[#333] placeholder:text-base placeholder:leading-[150%] placeholder:font-normal pl-9 hover:shadow-purple-2xl ring:shadow-purple-2xl hover:border-[#633CFF] cursor-pointer focus:ring-input_focus focus:shadow-lg outline-none focus:ring-1 focus:ring-[#633CFF] p-3 border border-[#D9D9D9] rounded-[0.5rem] bg-[#fff] text-[#333] text-base leading-[150%] font-normal"
+                                  placeholder="Enter platform name"
+                                />
+                                <MoreHorizontal className="absolute top-5 left-4 w-4 h-4 text-[#737373]" />
+                              </div>
+                            </div>
+                          )}
                           <h1 className="flex text-[#333] text-[0.75rem] font-normal leading-[150%]">
                             Link{" "}
                           </h1>{" "}
                           <div className="relative">
-                            {websites.find(
-                              (web) =>
-                                web.name.toLowerCase() ===
-                                links.name.toLowerCase()
-                            )?.link && (
-                              <input
-                                type="text"
-                                className={`pl-9 ${
-                                  errors[i]
-                                    ? "border-red-500 pr-[8rem] focus:ring-0 focus:ring-red-500 hover:shadow-none hover:border-red-500"
-                                    : ""
-                                } hover:shadow-purple-2xl ring:shadow-purple-2xl hover:border-[#633CFF] cursor-pointer focus:ring-input_focus focus:shadow-lg  outline-none focus:ring-1 focus:ring-[#633CFF] mt-[0.25rem] pr-4 py-3 text-opacity-50 placeholder:text-opacity-50 border border-solid w-full border-[#D9D9D9] rounded-[0.5rem] bg-[#fff] text-[#333] text-base leading-[150%] font-normal placeholder:text-[#333] placeholder:text-base placeholder:leading-[150%] placeholder:font-normal`}
-                                onChange={(e) =>
-                                  handleLinkChange(i, e.target.value)
-                                }
-                                value={links.link}
-                              />
-                            )}
-
+                            <input
+                              type="text"
+                              className={`pl-9 ${
+                                errors[i]
+                                  ? "border-red-500 pr-[8rem] focus:ring-0 focus:ring-red-500 hover:shadow-none hover:border-red-500"
+                                  : ""
+                              } hover:shadow-purple-2xl ring:shadow-purple-2xl hover:border-[#633CFF] cursor-pointer focus:ring-input_focus focus:shadow-lg  outline-none focus:ring-1 focus:ring-[#633CFF] mt-[0.25rem] pr-4 py-3 text-opacity-50 placeholder:text-opacity-50 border border-solid w-full border-[#D9D9D9] rounded-[0.5rem] bg-[#fff] text-[#333] text-base leading-[150%] font-normal placeholder:text-[#333] placeholder:text-base placeholder:leading-[150%] placeholder:font-normal`}
+                              onChange={(e) =>
+                                handleLinkChange(i, e.target.value)
+                              }
+                              value={links.link}
+                            />
                             <Image
                               className="absolute top-5 left-4"
                               src={linkimage}
@@ -566,8 +657,8 @@ const CustomizeLinkSkeleton = () => {
               <button
                 onClick={() => handleSave(0)}
                 className={` ${
-                    saveLoading && "bg-[#BEADFF] loading-email"
-                  } text-white mt-[1.5rem] sm:w-fit w-full rounded-[0.5rem] cursor-pointer bg-[#633CFF]  py-[0.6875rem] px-[1.6875rem] text-base font-semibold leading-[150%]`}
+                  saveLoading && "bg-[#BEADFF] loading-email"
+                } text-white mt-[1.5rem] sm:w-fit w-full rounded-[0.5rem] cursor-pointer bg-[#633CFF]  py-[0.6875rem] px-[1.6875rem] text-base font-semibold leading-[150%]`}
               >
                 Save
               </button>
